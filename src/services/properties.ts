@@ -10,8 +10,7 @@ import { commonAssetRegistries } from './assetRegistry/common'
 import { NetworkBaseInfo } from '../connections/networks/types'
 import Cache from '../cache'
 
-type ChainsInfo = Record<string, ChainProperty>
-const chainPropertiesCache = new Cache<ChainsInfo>(ONE_HOUR)
+const chainPropertiesCache = new Cache<ChainProperty>('properies', ONE_HOUR)
 
 export type ChainProperty = NetworkBaseInfo &
   Partial<{
@@ -24,7 +23,7 @@ export type ChainProperty = NetworkBaseInfo &
     existentialDeposit: string
   }>
 
-export function getCachedChainProperties(chain: string): ChainProperty | undefined {
+export async function getCachedChainProperties(chain: string): Promise<ChainProperty | undefined> {
   return chainPropertiesCache.get(chain)
 }
 
@@ -58,6 +57,18 @@ const getAssetsRegistry = (network: string) => {
 }
 
 const getPropertiesByNetwork = async (api: ApiPromise, network: string): Promise<ChainProperty> => {
+  const {
+    icon,
+    name,
+    node,
+    nativeToken,
+    paraId,
+    relayChain,
+    vestingMethod,
+    isEthLike,
+    isTransferable,
+    tokenTransferMethod
+  } = networks[network]
   const {
     icon,
     name,
@@ -117,7 +128,7 @@ const getPropertiesByNetwork = async (api: ApiPromise, network: string): Promise
 export const updatePropertiesByNetwork = async (api: ApiPromise, network: string) => {
   const propertiesByNetwork = await getPropertiesByNetwork(api, network)
 
-  chainPropertiesCache[network] = propertiesByNetwork
+  await chainPropertiesCache.set(network, propertiesByNetwork)
 }
 
 export const getOrUpdatePropertiesByNetwork = async (api: ApiPromise, network: string) => {
@@ -125,11 +136,10 @@ export const getOrUpdatePropertiesByNetwork = async (api: ApiPromise, network: s
     await updatePropertiesByNetwork(api, network)
   }
 
-  return chainPropertiesCache[network]
+  return chainPropertiesCache.get(network)
 }
 
 export const getNetworksProperties = async ({ apis }: WithApis) => {
-  chainPropertiesCache.set
   return getFromAllNetworks(apis, getPropertiesByNetwork, {
     cache: chainPropertiesCache,
     needUpdate: chainPropertiesCache.needUpdate
