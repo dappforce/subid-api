@@ -13,7 +13,6 @@ import Cache from '../cache'
 type ChainsInfo = Record<string, ChainProperty>
 const chainPropertiesCache = new Cache<ChainsInfo>(ONE_HOUR)
 
-
 export type ChainProperty = NetworkBaseInfo &
   Partial<{
     ss58Format: number
@@ -24,8 +23,8 @@ export type ChainProperty = NetworkBaseInfo &
     totalIssuance: string
     existentialDeposit: string
   }>
-  
-export function getCachedChainProperties (chain: string): ChainProperty | undefined {
+
+export function getCachedChainProperties(chain: string): ChainProperty | undefined {
   return chainPropertiesCache.get(chain)
 }
 
@@ -33,7 +32,7 @@ const customFetchAssetsRegistryByNetwork = {
   interlay: getKintsugiAssetRegistry,
   kintsugi: getKintsugiAssetRegistry,
   basilisk: commonAssetRegistries['assetRegistry.metadataMap'],
-  'hydra': commonAssetRegistries['assetRegistry.metadataMap'],
+  hydra: commonAssetRegistries['assetRegistry.metadataMap'],
   astar: commonAssetRegistries['assets.metadata'],
   shiden: commonAssetRegistries['assets.metadata'],
   statemine: commonAssetRegistries['assets.metadata'],
@@ -52,7 +51,6 @@ const customFetchAssetsRegistryByNetwork = {
   phala: commonAssetRegistries['assets.metadata'],
   khala: commonAssetRegistries['assets.metadata'],
   pendulum: async () => ({ DOT: { currency: 0, symbol: 'DOT', decimals: 10 } })
-
 }
 
 const getAssetsRegistry = (network: string) => {
@@ -60,7 +58,19 @@ const getAssetsRegistry = (network: string) => {
 }
 
 const getPropertiesByNetwork = async (api: ApiPromise, network: string): Promise<ChainProperty> => {
-  const { icon, name, node, nativeToken, paraId, relayChain, vestingMethod, isEthLike, isTransferable, tokenTransferMethod } = networks[network]
+  const {
+    icon,
+    name,
+    node,
+    nativeToken,
+    paraId,
+    wsNode,
+    relayChain,
+    vestingMethod,
+    isEthLike,
+    isTransferable,
+    tokenTransferMethod
+  } = networks[network]
 
   const baseInfo = {
     icon,
@@ -68,6 +78,7 @@ const getPropertiesByNetwork = async (api: ApiPromise, network: string): Promise
     node,
     nativeToken,
     paraId,
+    wsNode,
     relayChain,
     vestingMethod,
     isEthLike,
@@ -83,7 +94,7 @@ const getPropertiesByNetwork = async (api: ApiPromise, network: string): Promise
 
     const r = api.registry
 
-    const [ assetsRegistry, totalIssuance ] = await Promise.all([
+    const [assetsRegistry, totalIssuance] = await Promise.all([
       getAssetsRegistry(network)(api),
       api.query.balances?.totalIssuance()
     ])
@@ -109,9 +120,8 @@ export const updatePropertiesByNetwork = async (api: ApiPromise, network: string
   chainPropertiesCache[network] = propertiesByNetwork
 }
 
-
 export const getOrUpdatePropertiesByNetwork = async (api: ApiPromise, network: string) => {
-  if(isEmptyObj(chainPropertiesCache[network])) {
+  if (isEmptyObj(chainPropertiesCache[network])) {
     await updatePropertiesByNetwork(api, network)
   }
 
@@ -120,9 +130,8 @@ export const getOrUpdatePropertiesByNetwork = async (api: ApiPromise, network: s
 
 export const getNetworksProperties = async ({ apis }: WithApis) => {
   chainPropertiesCache.set
-  return getFromAllNetworks(
-    apis, 
-    getPropertiesByNetwork, 
-    { cache: chainPropertiesCache, needUpdate: chainPropertiesCache.needUpdate }
-  )
+  return getFromAllNetworks(apis, getPropertiesByNetwork, {
+    cache: chainPropertiesCache,
+    needUpdate: chainPropertiesCache.needUpdate
+  })
 }
