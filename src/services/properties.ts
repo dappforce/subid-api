@@ -63,18 +63,6 @@ const getPropertiesByNetwork = async (api: ApiPromise, network: string): Promise
     node,
     nativeToken,
     paraId,
-    relayChain,
-    vestingMethod,
-    isEthLike,
-    isTransferable,
-    tokenTransferMethod
-  } = networks[network]
-  const {
-    icon,
-    name,
-    node,
-    nativeToken,
-    paraId,
     wsNode,
     relayChain,
     vestingMethod,
@@ -82,6 +70,7 @@ const getPropertiesByNetwork = async (api: ApiPromise, network: string): Promise
     isTransferable,
     tokenTransferMethod
   } = networks[network]
+
 
   const baseInfo = {
     icon,
