@@ -32,7 +32,14 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 20
-
+          env:
+            - name: REDIS_HOST
+              value: redis-master.default/2
+            - name: REDIS_PORT
+              value: '6379'
+          envFrom:
+            - secretRef:
+                name: subid-back-secret
           livenessProbe:
             failureThreshold: 3
             httpGet:

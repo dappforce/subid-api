@@ -38,7 +38,14 @@ spec:
             limits:
               memory: "4300Mi"
               cpu: "2"
-
+          env:
+            - name: REDIS_HOST
+              value: redis-master.default/2
+            - name: REDIS_PORT
+              value: '6379'
+          envFrom:
+            - secretRef:
+                name: subid-back-secret                
           readinessProbe:
             failureThreshold: 3
             httpGet:
