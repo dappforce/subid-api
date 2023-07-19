@@ -1,5 +1,5 @@
 import { newLogger } from '@subsocial/utils'
-import { redisCallWrapper } from './redisCache'
+import { isRedisReady, redisCallWrapper } from './redisCache'
 
 const log = newLogger('Cache data')
 
@@ -8,11 +8,18 @@ export const getRedisKey = (prefix: string, key: string) => `${prefix}:${key}`
 const getLastUpdate = (prefix: string) => `${prefix}:last-update-time`
 
 class Cache<T extends any> {
+  private cache: T = {} as any
+  private lastUpdate = undefined
   private ttlSeconds: number = undefined
   private prefix: string = ''
 
   constructor(prefix: string, ttlSeconds: number) {
-    redisCallWrapper((redis) => redis?.set(getLastUpdate(prefix), new Date().getTime()))
+    if (isRedisReady) {
+      redisCallWrapper((redis) => redis?.set(getLastUpdate(prefix), new Date().getTime()))
+    } else {
+      this.lastUpdate = new Date().getTime()
+    }
+
     this.ttlSeconds = ttlSeconds
     this.prefix = prefix
   }
@@ -20,7 +27,9 @@ class Cache<T extends any> {
   needUpdate = async () => {
     const now = new Date().getTime()
 
-    const lastUpdate = await redisCallWrapper((redis) => redis?.get(getLastUpdate(this.prefix)))
+    const lastUpdate = isRedisReady
+      ? await redisCallWrapper((redis) => redis?.get(getLastUpdate(this.prefix)))
+      : this.lastUpdate
 
     if (now > parseInt(lastUpdate || '0') + this.ttlSeconds) {
       log.debug('Update properties')
@@ -32,34 +41,57 @@ class Cache<T extends any> {
   }
 
   get = async (key: string) => {
-    const result = await redisCallWrapper(async (redis) =>
-      redis?.get(getRedisKey(this.prefix, key))
-    )
+    if (isRedisReady) {
+      console.log('use redis for get')
+      const result = await redisCallWrapper(async (redis) =>
+        redis?.get(getRedisKey(this.prefix, key))
+      )
 
-    return result ? (JSON.parse(result) as T) : undefined
+      return result ? (JSON.parse(result) as T) : undefined
+    } else {
+      return this.cache[key]
+    }
   }
 
   set = async <E extends any>(key: string, value: E) => {
-    await redisCallWrapper((redis) => redis?.set(getRedisKey(this.prefix, key), JSON.stringify(value)))
+    if (isRedisReady) {
+      console.log('use redis for set')
+      await redisCallWrapper((redis) =>
+        redis?.set(getRedisKey(this.prefix, key), JSON.stringify(value))
+      )
+    } else {
+      this.cache[key] = value
+    }
   }
 
-  getAllValues = (keys: string[]) => {
-    return redisCallWrapper<Record<string, T>>(async (redis) => {
-      const resultPromise = keys.map(async (key) => {
-        const data = await redis.get(getRedisKey(this.prefix, key))
-        return JSON.parse(data)
+  getAllValues = (keys: string[]): any => {
+    if (isRedisReady) {
+      console.log('use redis for getAllValues')
+      return redisCallWrapper<Record<string, T>>(async (redis) => {
+        const resultPromise = keys.map(async (key) => {
+          const data = await redis.get(getRedisKey(this.prefix, key))
+          return JSON.parse(data)
+        })
+
+        const result = await Promise.all(resultPromise)
+
+        const data = {}
+
+        keys.forEach((key, i) => {
+          data[key] = result[i]
+        })
+
+        return data
       })
-
-      const result = await Promise.all(resultPromise)
-
+    } else {
       const data = {}
 
-      keys.forEach((key, i) => {
-        data[key] = result[i]
+      keys.forEach((key) => {
+        data[key] = this.cache[key]
       })
 
       return data
-    })
+    }
   }
 }
 

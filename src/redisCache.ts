@@ -1,9 +1,11 @@
 import Redis, { RedisOptions } from 'ioredis'
-import { newLogger } from '@subsocial/utils';
+import { newLogger } from '@subsocial/utils'
 
 const log = newLogger('Redis')
 
 let redis: Redis | undefined = undefined
+export let isRedisReady = false
+let isConnectionClosed = false
 
 export function checkEnv(data: string | undefined, envName: string, throwError = false) {
   if (data === undefined && throwError) {
@@ -12,7 +14,7 @@ export function checkEnv(data: string | undefined, envName: string, throwError =
   return data as string
 }
 
-export function getRedisConfig() {
+function getRedisConfig() {
   const host = checkEnv(process.env.REDIS_HOST, 'REDIS_HOST')
   const port = checkEnv(process.env.REDIS_PORT, 'REDIS_PORT')
   const password = checkEnv(process.env.REDIS_PASSWORD, 'REDIS_PASSWORD')
@@ -27,10 +29,10 @@ export function getRedisConfig() {
   return { host, port: parsedPort, password }
 }
 
-export function createRedisInstance() {
+function createRedisInstance() {
   try {
     const config = getRedisConfig()
-    
+
     const options: RedisOptions = {
       host: config.host,
       password: config.password,
@@ -49,23 +51,59 @@ export function createRedisInstance() {
     const redis = new Redis(options)
 
     redis.on('error', (error: any) => {
-      log.warn('[Redis] Warning: error connecting to redis', error?.message)
+      if (isConnectionClosed) return
+      log.warn('Warning: error connecting to redis', error?.message)
+    })
+
+    redis.on('close', () => {
+      if (isConnectionClosed) return
+      log.warn('Redis connection closed')
+      isRedisReady = false
+      isConnectionClosed = true
+    })
+
+    redis.on('connect', async () => {
+      log.info('Redis connected')
+      isConnectionClosed = false
+      await checkConnection()
     })
 
     return redis
   } catch (e) {
-    console.error(`[Redis] Could not create a Redis instance`)
+    log.error(`Could not create a Redis instance`)
     return null
   }
+}
+
+const checkConnection = async () => {
+  if (!isRedisReady) {
+    try {
+      await redis.get('status')
+      isRedisReady = true
+      log.info('Redis is ready')
+    } catch {
+      isRedisReady = false
+      log.warn('Redis is not ready. Check your configuration')
+    }
+  }
+
+  return isRedisReady
+}
+
+export const initializeRedis = async () => {
+  if (!redis) {
+    redis = createRedisInstance()
+  }
+
+  await checkConnection()
+
+  return isRedisReady
 }
 
 export async function redisCallWrapper<T = void>(
   callback: (redis: Redis | null) => Promise<T> | undefined
 ) {
   try {
-    if(!redis) {
-      redis = createRedisInstance()
-    }
     return await callback(redis)
   } catch (err: any) {
     log.warn('[Redis] Warning: operation failed', err?.message)
