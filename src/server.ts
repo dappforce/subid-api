@@ -61,12 +61,12 @@ export const startHttpServer = (apis: Connections) => {
     res.status(500).send(err.stack)
   })
 
-  redis.on('error', (error: any) => {
+  redis?.on('error', (error: any) => {
     if (_isConnectionClosed) return
     log.warn('Error connecting to redis', error?.message)
   })
 
-  redis.on('close', () => {
+  redis?.on('close', () => {
     if (_isConnectionClosed) return
     setIsRedisReady(false)
     setIsConnectionClosed(true)
@@ -76,7 +76,7 @@ export const startHttpServer = (apis: Connections) => {
     getValidatorsDataByRelayChains(apis)
   })
 
-  redis.on('connect', async () => {
+  redis?.on('connect', async () => {
     log.info('Redis connected')
     setIsConnectionClosed(false)
     await checkConnection({ showLogs: true })
