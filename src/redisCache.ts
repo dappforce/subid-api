@@ -37,6 +37,7 @@ function createRedisInstance() {
       host: config.host,
       password: config.password,
       port: config.port,
+      db: 2,
 
       lazyConnect: true,
       showFriendlyErrorStack: true,
@@ -50,7 +51,7 @@ function createRedisInstance() {
 
     const redis = new Redis(options)
 
-    redis.on('error', () => { return })
+    redis?.on('error', () => { return })
 
     return redis
   } catch (e) {
