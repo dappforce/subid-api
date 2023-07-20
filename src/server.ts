@@ -6,6 +6,15 @@ import { newLogger } from '@subsocial/utils'
 
 import { createRoutes } from './routes'
 import { Connections } from './connections'
+import {
+  _isConnectionClosed,
+  checkConnection,
+  getRedisInstance,
+  setIsConnectionClosed,
+  setIsRedisReady
+} from './redisCache'
+import { relayChains } from './services/crowdloan/types'
+import { getValidatorsData, getValidatorsDataByRelayChains } from './services/validatorStaking'
 
 require('dotenv').config()
 
@@ -14,13 +23,17 @@ const log = newLogger('HTTP server')
 export const startHttpServer = (apis: Connections) => {
   const app = express()
 
+  const redis = getRedisInstance()
+
   app.use(express.static('public'))
 
   app.use(
     cors((req, callback) => {
       const corsOptions = { origin: true }
       const origin = req.header('Origin')
-      const isAllowedOrigin = allowedOrigins.some((allowedOrigin) => origin?.includes(allowedOrigin))
+      const isAllowedOrigin = allowedOrigins.some((allowedOrigin) =>
+        origin?.includes(allowedOrigin)
+      )
       if (!isAllowedOrigin) {
         corsOptions.origin = false
       }
@@ -47,6 +60,29 @@ export const startHttpServer = (apis: Connections) => {
   app.use(function (err, _req, res, _next) {
     log.error(JSON.stringify(err.stack))
     res.status(500).send(err.stack)
+  })
+
+  redis.on('error', (error: any) => {
+    if (_isConnectionClosed) return
+    log.warn('Error connecting to redis', error?.message)
+  })
+
+  redis.on('close', () => {
+    if (_isConnectionClosed) return
+    setIsRedisReady(false)
+    setIsConnectionClosed(true)
+
+    log.warn('Redis connection closed')
+
+    getValidatorsDataByRelayChains(apis)
+  })
+
+  redis.on('connect', async () => {
+    log.info('Redis connected')
+    setIsConnectionClosed(false)
+    await checkConnection({ showLogs: true })
+
+    getValidatorsDataByRelayChains(apis)
   })
 
   // for parsing multipart/form-data

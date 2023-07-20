@@ -4,11 +4,10 @@ import { BN_ZERO, arrayFlatten, BN } from '@polkadot/util'
 import { toGenericAccountId } from '../utils'
 import { FIVE_MINUTES, TEN_MILLION } from '../../constant/index'
 
-import type {
-  DeriveStakingElected,
-  DeriveStakingWaiting,
-} from '@polkadot/api-derive/types'
+import type { DeriveStakingElected, DeriveStakingWaiting } from '@polkadot/api-derive/types'
 import Cache from '../../cache'
+import { Connections } from '../../connections'
+import { relayChains } from '../crowdloan/types'
 
 const validatorStakingInfoCache = new Cache<any>('validator-staking-info', FIVE_MINUTES)
 
@@ -130,13 +129,13 @@ function mergeValidatorsInfo(
 export const getValidatorsData = async (api: any, network: string) => {
   const cacheData = await validatorStakingInfoCache.get(network)
 
-  if(cacheData?.loading) return
+  if (cacheData?.loading) return
 
   await validatorStakingInfoCache.set(network, {
     ...cacheData,
     loading: true
   })
-  
+
   const electedInfo = await api.derive.staking.electedInfo()
   const waitingInfo = await api.derive.staking.waitingInfo()
   const activeEra = await api.query.staking.activeEra()
@@ -156,6 +155,15 @@ export const getValidatorsData = async (api: any, network: string) => {
   })
 }
 
+export const getValidatorsDataByRelayChains = async (apis: Connections) => {
+  relayChains.forEach((network: string) => {
+    const api = apis.wsApis?.[network]
+
+    if (!api) return
+    getValidatorsData(api, network)
+  })
+}
+
 export const getValidatorsList = async ({ apis, network }: ValidatorStakingProps) => {
   const api = apis[network]
 
@@ -163,7 +171,7 @@ export const getValidatorsList = async ({ apis, network }: ValidatorStakingProps
 
   const needUpdate = validatorStakingInfoCache.needUpdate
 
-  const forceUpdate = needUpdate && await needUpdate()
+  const forceUpdate = needUpdate && (await needUpdate())
   const cacheData = await validatorStakingInfoCache.get(network)
 
   if (!cacheData || forceUpdate) {

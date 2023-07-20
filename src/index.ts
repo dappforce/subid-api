@@ -1,9 +1,9 @@
 import { createConnections } from './connections'
-import { initializeRedis } from './redisCache'
+import { getRedisInstance } from './redisCache'
 import { startHttpServer } from './server'
 
 const start = async () => {
-  initializeRedis()
+  getRedisInstance()
   const apis = await createConnections()
   startHttpServer(apis)
 }

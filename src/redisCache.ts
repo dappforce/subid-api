@@ -4,8 +4,8 @@ import { newLogger } from '@subsocial/utils'
 const log = newLogger('Redis')
 
 let redis: Redis | undefined = undefined
-export let isRedisReady = false
-let isConnectionClosed = false
+export let _isRedisReady = false
+export let _isConnectionClosed = true
 
 export function checkEnv(data: string | undefined, envName: string, throwError = false) {
   if (data === undefined && throwError) {
@@ -50,23 +50,7 @@ function createRedisInstance() {
 
     const redis = new Redis(options)
 
-    redis.on('error', (error: any) => {
-      if (isConnectionClosed) return
-      log.warn('Warning: error connecting to redis', error?.message)
-    })
-
-    redis.on('close', () => {
-      if (isConnectionClosed) return
-      log.warn('Redis connection closed')
-      isRedisReady = false
-      isConnectionClosed = true
-    })
-
-    redis.on('connect', async () => {
-      log.info('Redis connected')
-      isConnectionClosed = false
-      await checkConnection()
-    })
+    redis.on('error', () => { return })
 
     return redis
   } catch (e) {
@@ -75,29 +59,41 @@ function createRedisInstance() {
   }
 }
 
-const checkConnection = async () => {
-  if (!isRedisReady) {
+type CheckConnectionProps = {
+  showLogs: boolean
+}
+
+export const checkConnection = async ({ showLogs }: CheckConnectionProps) => {
+  if (!_isRedisReady) {
     try {
       await redis.get('status')
-      isRedisReady = true
-      log.info('Redis is ready')
+      _isRedisReady = true
+      showLogs && log.info('Redis is ready')
     } catch {
-      isRedisReady = false
-      log.warn('Redis is not ready. Check your configuration')
+      _isRedisReady = false
+      showLogs && log.warn('Redis is not ready. Check your configuration')
     }
   }
 
-  return isRedisReady
+  return _isRedisReady
 }
 
-export const initializeRedis = async () => {
+export const getRedisInstance = () => {
   if (!redis) {
     redis = createRedisInstance()
   }
 
-  await checkConnection()
+  checkConnection({ showLogs: true })
 
-  return isRedisReady
+  return redis
+}
+
+export const setIsRedisReady = (isRedisReady: boolean) => {
+  _isRedisReady = isRedisReady
+}
+
+export const setIsConnectionClosed = (isConnectionClosed: boolean) => {
+  _isConnectionClosed = isConnectionClosed
 }
 
 export async function redisCallWrapper<T = void>(
@@ -106,7 +102,7 @@ export async function redisCallWrapper<T = void>(
   try {
     return await callback(redis)
   } catch (err: any) {
-    log.warn('[Redis] Warning: operation failed', err?.message)
+    log.warn('Operation failed', err?.message)
     return null
   }
 }
