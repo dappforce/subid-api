@@ -13,8 +13,7 @@ import {
   setIsConnectionClosed,
   setIsRedisReady
 } from './redisCache'
-import { relayChains } from './services/crowdloan/types'
-import { getValidatorsData, getValidatorsDataByRelayChains } from './services/validatorStaking'
+import { getValidatorsDataByRelayChains } from './services/validatorStaking'
 
 require('dotenv').config()
 
