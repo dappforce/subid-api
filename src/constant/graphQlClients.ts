@@ -6,11 +6,11 @@ export const subsocialGraphQlClient = new GraphQLClient(SUBSOCIAL_GRAPHQL_CLIENT
 
 export const contributionsClientByRelay: Record<RelayChain, { client: GraphQLClient; addressPrefix: number }> = {
   kusama: {
-    client: new GraphQLClient('https://squid.subsquid.io/kusama-explorer/graphql'),
+    client: new GraphQLClient('https://squid.subsquid.io/kusama-explorer/graphql', { timeout: 5000 }),
     addressPrefix: 2
   },
   polkadot: {
-    client: new GraphQLClient('https://squid.subsquid.io/polkadot-explorer/graphql'),
+    client: new GraphQLClient('https://squid.subsquid.io/polkadot-explorer/graphql', { timeout: 5000 }),
     addressPrefix: 0
   }
 }
