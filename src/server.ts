@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import timeout from 'connect-timeout'
-import { reqTimeoutSecs, allowedOrigins, port } from './constant/env'
+import { reqTimeoutSecs/* , allowedOrigins */, port } from './constant/env'
 import { newLogger } from '@subsocial/utils'
 
 import { createRoutes } from './routes'
@@ -26,17 +26,24 @@ export const startHttpServer = (apis: Connections) => {
 
   app.use(express.static('public'))
 
+  // app.use(
+  //   cors((req, callback) => {
+  //     const corsOptions = { origin: true }
+  //     const origin = req.header('Origin')
+  //     const isAllowedOrigin = allowedOrigins.some((allowedOrigin) =>
+  //       origin?.includes(allowedOrigin)
+  //     )
+  //     if (!isAllowedOrigin) {
+  //       corsOptions.origin = false
+  //     }
+  //     callback(null, corsOptions)
+  //   })
+  // )
+
   app.use(
     cors((req, callback) => {
-      const corsOptions = { origin: true }
-      const origin = req.header('Origin')
-      const isAllowedOrigin = allowedOrigins.some((allowedOrigin) =>
-        origin?.includes(allowedOrigin)
-      )
-      if (!isAllowedOrigin) {
-        corsOptions.origin = false
-      }
-      callback(null, corsOptions)
+      const origin = req.method === 'GET' ? '*' : '*'
+      callback(null, { origin })
     })
   )
 
