@@ -34,7 +34,7 @@ spec:
             timeoutSeconds: 20
           env:
             - name: REDIS_HOST
-              value: redis-master.default/2
+              value: redis-master.default
             - name: REDIS_PORT
               value: '6379'
           envFrom:
