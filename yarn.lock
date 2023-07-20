@@ -968,21 +968,21 @@
   resolved "https://registry.yarnpkg.com/@kiltprotocol/type-definitions/-/type-definitions-0.1.23.tgz#c54475dad7849dc4654975da33590872fc9acdde"
   integrity sha512-5bGUDo8aVTWttwUrV1gyRUlbBn9zllv6/ofAda9ejMbjY5o99YqsAWlXg1mro6BqE3rcF/i0tGbIdO9Z0tOttA==
 
-"@kodadot1/static@0.0.1":
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/@kodadot1/static/-/static-0.0.1.tgz#35a08a70a1456b783f586a375235b9dfe2e0ade0"
-  integrity sha512-ULbPocLXnD2umJD898wwXX8vRM27g1MWn4znKjosBiFcVz9453YNYDuU+0U6/PHGc0XdHy30uIlP4OIoNfGuqA==
+"@kodadot1/static@0.0.3-rc.4":
+  version "0.0.3-rc.4"
+  resolved "https://registry.yarnpkg.com/@kodadot1/static/-/static-0.0.3-rc.4.tgz#705788914598df8a8d20d99b23800a504c8a4c98"
+  integrity sha512-2p0BAx2ABIGq3uVCBIeSRfLuhuEHL1b2583tzv40q1NPfYwvtZmQMvrzRDtTnz6Bh3qegBam46oaadj53/78bQ==
 
-"@kodadot1/uniquery@^0.3.0-rc.0":
-  version "0.3.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@kodadot1/uniquery/-/uniquery-0.3.0-rc.0.tgz#295a3d7b562dd5d26bbb9869d48645e51394defe"
-  integrity sha512-jwS2jatwrtJR1HG7Cbx15dPWJUl0FOTtNRJ5XbyH4QanGUbO1H6W7L5kKTe7pTLKb4bMdkUYjcMmjkcoCzkKSg==
+"@kodadot1/uniquery@^0.3.1-rc.0":
+  version "0.3.1-rc.0"
+  resolved "https://registry.yarnpkg.com/@kodadot1/uniquery/-/uniquery-0.3.1-rc.0.tgz#3d4e1b503948bc5ed057b980b0304d346cca0b0e"
+  integrity sha512-Y2QR0vSEmAzcZx1+9lNUK2S5btXGQo7uQBjiElqmM3UGKukVNeCMQTwdJ5uuBujsu9BSLRiCyqEwP6gyrXf5aA==
   dependencies:
-    "@kodadot1/static" "0.0.1"
+    "@kodadot1/static" "0.0.3-rc.4"
     gql-query-builder "^3.8.0"
     ofetch "^1.0.1"
     scule "^1.0.0"
-    ufo "^1.1.1"
+    ufo "^1.1.2"
 
 "@laminar/type-definitions@0.3.1":
   version "0.3.1"
@@ -6452,10 +6452,15 @@ typescript@^4.4.3, typescript@^4.4.x, typescript@^4.5.2, typescript@^4.7.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.4.tgz#a2a3d2756c079abda241d75f149df9d561091e78"
   integrity sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg==
 
-ufo@^1.1.0, ufo@^1.1.1:
+ufo@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/ufo/-/ufo-1.1.1.tgz#e70265e7152f3aba425bd013d150b2cdf4056d7c"
   integrity sha512-MvlCc4GHrmZdAllBc0iUDowff36Q9Ndw/UzqmEKyrfSzokTd9ZCy1i+IIk5hrYKkjoYVQyNbrw7/F8XJ2rEwTg==
+
+ufo@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/ufo/-/ufo-1.1.2.tgz#d0d9e0fa09dece0c31ffd57bd363f030a35cfe76"
+  integrity sha512-TrY6DsjTQQgyS3E3dBaOXf0TpPD8u9FVrVYmKVegJuFw51n/YB9XPt+U6ydzFG5ZIN7+DIjPbNmXoBj9esYhgQ==
 
 uglify-js@^3.1.4:
   version "3.17.4"

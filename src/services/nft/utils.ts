@@ -23,7 +23,7 @@ export const createRmrk2Url = (account: string) => `https://singular.rmrk-api.xy
 
 const rmrkGateway = 'https://ipfs.rmrk.link'
 
-const createIpfsUrl = (cidUrl?: string) => cidUrl?.startsWith('ipfs:/') ? cidUrl?.replace('ipfs:/', rmrkGateway) : cidUrl
+export const createIpfsUrl = (cidUrl?: string) => cidUrl?.startsWith('ipfs:/') ? cidUrl?.replace('ipfs:/', rmrkGateway) : cidUrl
 
 type BuildLinkFn = (id: string) => string
 
