@@ -152,7 +152,9 @@ export const getValidatorsData = async (api: any, network: string) => {
           era,
           ...baseInfo
         }
-
+  
+  console.log('fetched info', info)
+    
   await validatorStakingInfoCache.set(network, {
     info,
     loading: false
@@ -178,7 +180,7 @@ export const getValidatorsList = async ({ apis, network }: ValidatorStakingProps
   const forceUpdate = needUpdate && (await needUpdate())
   const cacheData = await validatorStakingInfoCache.get(network)
 
-  console.log('needUpdate', needUpdate)
+  console.log('forceUpdate', forceUpdate)
   console.log('cacheData', cacheData)
 
   if (!cacheData || forceUpdate) {
