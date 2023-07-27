@@ -178,6 +178,9 @@ export const getValidatorsList = async ({ apis, network }: ValidatorStakingProps
   const forceUpdate = needUpdate && (await needUpdate())
   const cacheData = await validatorStakingInfoCache.get(network)
 
+  console.log('needUpdate', needUpdate)
+  console.log('cacheData', cacheData)
+
   if (!cacheData || forceUpdate) {
     getValidatorsData(api, network)
   }
