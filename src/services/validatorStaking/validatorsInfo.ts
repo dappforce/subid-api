@@ -128,37 +128,42 @@ function mergeValidatorsInfo(
 }
 
 export const getValidatorsData = async (api: any, network: string) => {
-  const cacheData = await validatorStakingInfoCache.get(network)
+  try {
+    const cacheData = await validatorStakingInfoCache.get(network)
 
-  if (cacheData?.loading) return
+    if (cacheData?.loading) return
 
-  await validatorStakingInfoCache.set(network, {
-    ...cacheData,
-    loading: true
-  })
+    await validatorStakingInfoCache.set(network, {
+      ...cacheData,
+      loading: true
+    })
 
-  const electedInfo = await api.derive.staking.electedInfo()
-  const waitingInfo = await api.derive.staking.waitingInfo()
-  const activeEra = await api.query.staking.activeEra()
+    const electedInfo = await api.derive.staking.electedInfo()
+    const waitingInfo = await api.derive.staking.waitingInfo()
+    const activeEra = await api.query.staking.activeEra()
 
-  const era = activeEra.toJSON().index
+    const era = activeEra.toJSON().index
 
-  const baseInfo = mergeValidatorsInfo(api, electedInfo, waitingInfo)
+    const baseInfo = mergeValidatorsInfo(api, electedInfo, waitingInfo)
 
-  const info =
-    !baseInfo || isEmptyObj(baseInfo?.validators)
-      ? undefined
-      : {
-          era,
-          ...baseInfo
-        }
-  
-  console.log('fetched info', info)
-    
-  await validatorStakingInfoCache.set(network, {
-    info,
-    loading: false
-  })
+    const info =
+      !baseInfo || isEmptyObj(baseInfo?.validators)
+        ? undefined
+        : {
+            era,
+            ...baseInfo
+          }
+
+    await validatorStakingInfoCache.set(network, {
+      info,
+      loading: false
+    })
+  } catch {
+    await validatorStakingInfoCache.set(network, {
+      info: undefined,
+      loading: false
+    })
+  }
 }
 
 export const getValidatorsDataByRelayChains = async (apis: Connections) => {
@@ -179,9 +184,6 @@ export const getValidatorsList = async ({ apis, network }: ValidatorStakingProps
 
   const forceUpdate = needUpdate && (await needUpdate())
   const cacheData = await validatorStakingInfoCache.get(network)
-
-  console.log('forceUpdate', forceUpdate)
-  console.log('cacheData', cacheData)
 
   if (!cacheData || forceUpdate) {
     getValidatorsData(api, network)
