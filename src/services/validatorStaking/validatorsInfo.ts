@@ -8,6 +8,7 @@ import type { DeriveStakingElected, DeriveStakingWaiting } from '@polkadot/api-d
 import Cache from '../../cache'
 import { Connections } from '../../connections'
 import { relayChains } from '../crowdloan/types'
+import { isEmptyObj } from '@subsocial/utils'
 
 const validatorStakingInfoCache = new Cache<any>('validator-staking-info', FIVE_MINUTES)
 
@@ -144,10 +145,13 @@ export const getValidatorsData = async (api: any, network: string) => {
 
   const baseInfo = mergeValidatorsInfo(api, electedInfo, waitingInfo)
 
-  const info = {
-    era,
-    ...baseInfo
-  }
+  const info =
+    !baseInfo || isEmptyObj(baseInfo?.validators)
+      ? undefined
+      : {
+          era,
+          ...baseInfo
+        }
 
   await validatorStakingInfoCache.set(network, {
     info,
