@@ -1,18 +1,12 @@
 import express from 'express'
 import cors from 'cors'
 import timeout from 'connect-timeout'
-import { reqTimeoutSecs/* , allowedOrigins */, port } from './constant/env'
+import { reqTimeoutSecs, allowedOrigins, port } from './constant/env'
 import { newLogger } from '@subsocial/utils'
 
 import { createRoutes } from './routes'
 import { Connections } from './connections'
-import {
-  _isConnectionClosed,
-  checkConnection,
-  getRedisInstance,
-  setIsConnectionClosed,
-  setIsRedisReady
-} from './redisCache'
+import { getOrCreateRedisCache } from './cache/redisCache';
 import { getValidatorsDataByRelayChains } from './services/validatorStaking'
 
 require('dotenv').config()
@@ -22,30 +16,32 @@ const log = newLogger('HTTP server')
 export const startHttpServer = (apis: Connections) => {
   const app = express()
 
-  const redis = getRedisInstance()
+  const redisCache = getOrCreateRedisCache()
+  const redis = redisCache.getOrCreateRedisInstance()
 
   app.use(express.static('public'))
 
-  // app.use(
-  //   cors((req, callback) => {
-  //     const corsOptions = { origin: true }
-  //     const origin = req.header('Origin')
-  //     const isAllowedOrigin = allowedOrigins.some((allowedOrigin) =>
-  //       origin?.includes(allowedOrigin)
-  //     )
-  //     if (!isAllowedOrigin) {
-  //       corsOptions.origin = false
-  //     }
-  //     callback(null, corsOptions)
-  //   })
-  // )
-
   app.use(
     cors((req, callback) => {
-      const origin = req.method === 'GET' ? '*' : '*'
-      callback(null, { origin })
+      const corsOptions = { origin: true }
+      const origin = req.header('Origin')
+      const isAllowedOrigin = allowedOrigins.some((allowedOrigin) =>
+        origin?.includes(allowedOrigin)
+      )
+      if (!isAllowedOrigin) {
+        corsOptions.origin = false
+      }
+      callback(null, corsOptions)
     })
   )
+
+  // For localhost testing
+  // app.use(
+  //   cors((req, callback) => {
+  //     const origin = req.method === 'GET' ? '*' : '*'
+  //     callback(null, { origin })
+  //   })
+  // )
 
   function haltOnTimedout(req: express.Request, _res: express.Response, next) {
     if (!req.timedout) next()
@@ -69,14 +65,14 @@ export const startHttpServer = (apis: Connections) => {
   })
 
   redis?.on('error', (error: any) => {
-    if (_isConnectionClosed) return
+    if (redisCache.isConnectionClosed) return
     log.warn('Error connecting to redis', error?.message)
   })
 
   redis?.on('close', () => {
-    if (_isConnectionClosed) return
-    setIsRedisReady(false)
-    setIsConnectionClosed(true)
+    if (redisCache.isConnectionClosed) return
+    redisCache.setIsRedisReady(false)
+    redisCache.setIsConnectionClosed(true)
 
     log.warn('Redis connection closed')
 
@@ -85,8 +81,8 @@ export const startHttpServer = (apis: Connections) => {
 
   redis?.on('connect', async () => {
     log.info('Redis connected')
-    setIsConnectionClosed(false)
-    await checkConnection({ showLogs: true })
+    redisCache.setIsConnectionClosed(false)
+    await redisCache.checkConnection({ showLogs: true })
 
     getValidatorsDataByRelayChains(apis)
   })

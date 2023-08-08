@@ -11,7 +11,6 @@ import { encodeAddress } from '@polkadot/util-crypto'
 import { subsocialGraphQlClient } from '../constant/graphQlClients'
 import Cache from '../cache'
 
-
 const updateDelay = 24 * 3600 * 1000 //seconds
 const identitiesInfoCache = new Cache<any>('identities', updateDelay)
 

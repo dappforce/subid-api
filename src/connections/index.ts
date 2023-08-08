@@ -89,7 +89,7 @@ const connect = async ({
     await updatePropertiesByNetwork(api, network)
 
     if (validatorsStakingNetworks.includes(network)) {
-      await getValidatorsData(wsApi || api, network)
+      await getValidatorsData(wsApi, network)
     }
   } catch {
     console.error(`Problem with connection to ${nodeName}`)

@@ -1,5 +1,6 @@
 import { newLogger } from '@subsocial/utils'
-import { checkConnection, redisCallWrapper } from './redisCache'
+import { getOrCreateRedisCache } from './redisCache'
+import { redisCallWrapper } from './utils'
 
 const log = newLogger('Cache data')
 
@@ -14,7 +15,9 @@ class Cache<T extends any> {
   private prefix: string = ''
 
   constructor(prefix: string, ttlSeconds: number) {
-    checkConnection({ showLogs: false}).then((isRedisReady) => {
+    const redisCache = getOrCreateRedisCache()
+
+    redisCache.checkConnection({ showLogs: false }).then((isRedisReady) => {
       if (isRedisReady) {
         redisCallWrapper((redis) => redis?.set(getLastUpdate(prefix), new Date().getTime()))
       } else {
@@ -28,7 +31,9 @@ class Cache<T extends any> {
 
   needUpdate = async () => {
     const now = new Date().getTime()
-    const isRedisReady = await checkConnection({ showLogs: false })
+
+    const redisCache = getOrCreateRedisCache()
+    const isRedisReady = await redisCache.checkConnection({ showLogs: false })
 
     const lastUpdate = isRedisReady
       ? await redisCallWrapper((redis) => redis?.get(getLastUpdate(this.prefix)))
@@ -44,7 +49,8 @@ class Cache<T extends any> {
   }
 
   get = async (key: string) => {
-    const isRedisReady = await checkConnection({ showLogs: false })
+    const redisCache = getOrCreateRedisCache()
+    const isRedisReady = await redisCache.checkConnection({ showLogs: false })
 
     if (isRedisReady) {
       const result = await redisCallWrapper(async (redis) =>
@@ -58,8 +64,9 @@ class Cache<T extends any> {
   }
 
   set = async <E extends any>(key: string, value: E) => {
-    const isRedisReady = await checkConnection({ showLogs: false })
-    
+    const redisCache = getOrCreateRedisCache()
+    const isRedisReady = await redisCache.checkConnection({ showLogs: false })
+
     if (isRedisReady) {
       await redisCallWrapper((redis) =>
         redis?.set(getRedisKey(this.prefix, key), JSON.stringify(value))
@@ -70,7 +77,8 @@ class Cache<T extends any> {
   }
 
   getAllValues = async (keys: string[]): Promise<any> => {
-    const isRedisReady = await checkConnection({ showLogs: false })
+    const redisCache = getOrCreateRedisCache()
+    const isRedisReady = await redisCache.checkConnection({ showLogs: false })
     if (isRedisReady) {
       return redisCallWrapper<Record<string, T>>(async (redis) => {
         const resultPromise = keys.map(async (key) => {

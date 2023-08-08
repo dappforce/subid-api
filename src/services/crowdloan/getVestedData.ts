@@ -4,18 +4,11 @@ import type {
   DeriveBalancesAccountData,
   DeriveBalancesAllAccountData,
   DeriveBalancesAll,
-  DeriveBalancesAccount,
   DeriveBalancesAllVesting
 } from '@polkadot/api-derive/types'
 import { BN, bnMax, objectSpread, BN_ZERO, bnMin } from '@polkadot/util'
 import type { Balance, BalanceLockTo212, BlockNumber } from '@polkadot/types/interfaces'
-
-interface AllLocked {
-  allLocked: boolean
-  lockedBalance: Balance
-  lockedBreakdown: (PalletBalancesBalanceLock | BalanceLockTo212)[]
-  vestingLocked: Balance
-}
+import { AllLocked, Result } from './types'
 
 const VESTING_ID = '0x76657374696e6720'
 
@@ -113,12 +106,6 @@ function calcVesting(
     vestingTotal
   }
 }
-
-type ResultBalance = [
-  PalletVestingVestingInfo[] | null,
-  (PalletBalancesBalanceLock | BalanceLockTo212)[]
-]
-type Result = [DeriveBalancesAccount, ResultBalance, BlockNumber]
 
 function calcBalances(api: ApiPromise, result: Result): DeriveBalancesAll {
   const [data, [vesting, allLocks], bestNumber] = result
