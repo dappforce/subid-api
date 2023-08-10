@@ -115,8 +115,8 @@ const getOrmlTokens: GetBalancesType = async (api, network, account, tokens) => 
 
 const getOnlyOrmlTokens = async (api: ApiPromise, account: string, network: string) =>{
   const props = await getOrUpdatePropertiesByNetwork(api, network)
-  const tokenSymbols = props.tokenSymbols as string[]
-  const tokens = props.assetsRegistry as Record<string, any>
+  const tokenSymbols = props?.tokenSymbols as string[] || []
+  const tokens = props?.assetsRegistry as Record<string, any> || {}
 
   return getOrmlTokens(api, network, account, [...tokenSymbols, ...Object.values(tokens)])
 }
@@ -125,8 +125,8 @@ const getNativeAndOrmlTokens = async (api: ApiPromise, account: string, network:
   const tokenBalances: TokenBalances = {}
 
   const props = await getOrUpdatePropertiesByNetwork(api, network)
-  const tokenSymbols = props.tokenSymbols as string[]
-  const tokens = props.assetsRegistry as Record<string, any>
+  const tokenSymbols = props?.tokenSymbols as string[] || []
+  const tokens = props?.assetsRegistry as Record<string, any> || {}
   const [native] = tokenSymbols
 
   tokenBalances[native] = await getNativeTokenBalance(api, account)

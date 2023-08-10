@@ -5,14 +5,19 @@ import { reqTimeoutSecs, allowedOrigins, port } from './constant/env'
 import { newLogger } from '@subsocial/utils'
 
 import { createRoutes } from './routes'
-import { Apis } from './connections/networks/types'
+import { Connections } from './connections'
+import { getOrCreateRedisCache } from './cache/redisCache';
+import { getValidatorsDataByRelayChains } from './services/validatorStaking'
 
 require('dotenv').config()
 
 const log = newLogger('HTTP server')
 
-export const startHttpServer = (apis: Apis) => {
+export const startHttpServer = (apis: Connections) => {
   const app = express()
+
+  const redisCache = getOrCreateRedisCache()
+  const redis = redisCache.getOrCreateRedisInstance()
 
   app.use(express.static('public'))
 
@@ -20,13 +25,23 @@ export const startHttpServer = (apis: Apis) => {
     cors((req, callback) => {
       const corsOptions = { origin: true }
       const origin = req.header('Origin')
-      const isAllowedOrigin = allowedOrigins.some((allowedOrigin) => origin?.includes(allowedOrigin))
+      const isAllowedOrigin = allowedOrigins.some((allowedOrigin) =>
+        origin?.includes(allowedOrigin)
+      )
       if (!isAllowedOrigin) {
         corsOptions.origin = false
       }
       callback(null, corsOptions)
     })
   )
+
+  // For localhost testing
+  // app.use(
+  //   cors((req, callback) => {
+  //     const origin = req.method === 'GET' ? '*' : '*'
+  //     callback(null, { origin })
+  //   })
+  // )
 
   function haltOnTimedout(req: express.Request, _res: express.Response, next) {
     if (!req.timedout) next()
@@ -47,6 +62,29 @@ export const startHttpServer = (apis: Apis) => {
   app.use(function (err, _req, res, _next) {
     log.error(JSON.stringify(err.stack))
     res.status(500).send(err.stack)
+  })
+
+  redis?.on('error', (error: any) => {
+    if (redisCache.isConnectionClosed) return
+    log.warn('Error connecting to redis', error?.message)
+  })
+
+  redis?.on('close', () => {
+    if (redisCache.isConnectionClosed) return
+    redisCache.setIsRedisReady(false)
+    redisCache.setIsConnectionClosed(true)
+
+    log.warn('Redis connection closed')
+
+    getValidatorsDataByRelayChains(apis)
+  })
+
+  redis?.on('connect', async () => {
+    log.info('Redis connected')
+    redisCache.setIsConnectionClosed(false)
+    await redisCache.checkConnection({ showLogs: true })
+
+    getValidatorsDataByRelayChains(apis)
   })
 
   // for parsing multipart/form-data

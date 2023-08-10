@@ -4,13 +4,13 @@ import { BN_ZERO, arrayFlatten, BN } from '@polkadot/util'
 import { toGenericAccountId } from '../utils'
 import { FIVE_MINUTES, TEN_MILLION } from '../../constant/index'
 
-import type {
-  DeriveStakingElected,
-  DeriveStakingWaiting,
-} from '@polkadot/api-derive/types'
+import type { DeriveStakingElected, DeriveStakingWaiting } from '@polkadot/api-derive/types'
 import Cache from '../../cache'
+import { Connections } from '../../connections'
+import { relayChains } from '../crowdloan/types'
+import { isEmptyObj } from '@subsocial/utils'
 
-const validatorStakingInfo = new Cache(FIVE_MINUTES)
+const validatorStakingInfoCache = new Cache<any>('validator-staking-info', FIVE_MINUTES)
 
 /// https://github.dev/polkadot-js/apps/blob/fb8f7fe86b2945fcc71dcd11c67ebeeab35ee37e/packages/page-staking/src/useSortedTargets.ts#L120-L121
 const parseValidatorStakingInfo = (
@@ -128,31 +128,50 @@ function mergeValidatorsInfo(
 }
 
 export const getValidatorsData = async (api: any, network: string) => {
-  const cacheData = validatorStakingInfo.get(network)
+  try {
+    const cacheData = await validatorStakingInfoCache.get(network)
 
-  if(cacheData?.loading) return
+    if (cacheData?.loading) return
 
-  validatorStakingInfo.set(network, {
-    ...cacheData,
-    loading: true
-  })
-  
-  const electedInfo = await api.derive.staking.electedInfo()
-  const waitingInfo = await api.derive.staking.waitingInfo()
-  const activeEra = await api.query.staking.activeEra()
+    await validatorStakingInfoCache.set(network, {
+      ...cacheData,
+      loading: true
+    })
 
-  const era = activeEra.toJSON().index
+    const electedInfo = await api.derive.staking.electedInfo()
+    const waitingInfo = await api.derive.staking.waitingInfo()
+    const activeEra = await api.query.staking.activeEra()
 
-  const baseInfo = mergeValidatorsInfo(api, electedInfo, waitingInfo)
+    const era = activeEra.toJSON().index
 
-  const info = {
-    era,
-    ...baseInfo
+    const baseInfo = mergeValidatorsInfo(api, electedInfo, waitingInfo)
+
+    const info =
+      !baseInfo || isEmptyObj(baseInfo?.validators)
+        ? undefined
+        : {
+            era,
+            ...baseInfo
+          }
+
+    await validatorStakingInfoCache.set(network, {
+      info,
+      loading: false
+    })
+  } catch {
+    await validatorStakingInfoCache.set(network, {
+      info: undefined,
+      loading: false
+    })
   }
+}
 
-  validatorStakingInfo.set(network, {
-    info,
-    loading: false
+export const getValidatorsDataByRelayChains = async (apis: Connections) => {
+  relayChains.forEach((network: string) => {
+    const api = apis.wsApis?.[network]
+
+    if (!api) return
+    getValidatorsData(api, network)
   })
 }
 
@@ -161,14 +180,16 @@ export const getValidatorsList = async ({ apis, network }: ValidatorStakingProps
 
   if (!api) return []
 
-  const needUpdate = validatorStakingInfo.needUpdate
+  const needUpdate = validatorStakingInfoCache.needUpdate
 
-  const forceUpdate = needUpdate && needUpdate()
-  const cacheData = validatorStakingInfo.get(network)
+  const forceUpdate = needUpdate && (await needUpdate())
+  const cacheData = await validatorStakingInfoCache.get(network)
 
   if (!cacheData || forceUpdate) {
     getValidatorsData(api, network)
   }
 
-  return validatorStakingInfo.get(network)?.info || {}
+  const validatorStakingInfo = await validatorStakingInfoCache.get(network)
+
+  return validatorStakingInfo?.info || {}
 }
