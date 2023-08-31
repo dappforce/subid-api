@@ -1,3 +1,5 @@
+![Production Deploy](https://github.com/dappforce/subid-api/actions/workflows/manual.yml/badge.svg)
+
 # Subsocial SubId services by [DappForce](https://github.com/dappforce)
 
 ## Api
