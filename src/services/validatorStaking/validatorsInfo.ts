@@ -168,8 +168,8 @@ export const getValidatorsData = async (api: any, network: string) => {
 
 export const getValidatorsDataByRelayChains = async (apis: Connections) => {
   relayChains.forEach((network: string) => {
-    const api = apis.wsApis?.[network]
-    // const api = apis.mixedApis?.[network]
+    // const api = apis.wsApis?.[network]
+    const api = apis.mixedApis?.[network]
 
     if (!api) return
     getValidatorsData(api, network)
