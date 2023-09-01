@@ -1,5 +1,5 @@
 import { Networks } from './types'
-import { getBitfrostApi, resolveOnfinalityUrl } from './utils'
+import { resolveOnfinalityUrl } from './utils'
 import { RelayChain } from '../../services/crowdloan/types'
 
 export const subsocial = {
@@ -100,7 +100,7 @@ export const kusamaParachains: Networks = {
   },
   heiko: {
     name: 'Parallel Heiko',
-    node: 'wss://heiko-rpc.parallel.fi',
+    ...resolveOnfinalityUrl('parallel-heiko'),
     icon: 'parallel.svg',
     nativeToken: 'HKO',
     paraId: 2085,
@@ -127,7 +127,6 @@ export const kusamaParachains: Networks = {
     ...resolveOnfinalityUrl('bifrost-parachain'),
     icon: 'bifrost.svg',
     paraId: 2001,
-    getApi: getBitfrostApi,
     isTransferable: true,
     tokenTransferMethod: 'tokens.transfer(recipient,id,amount)'
   },
@@ -233,7 +232,7 @@ export const kusamaParachains: Networks = {
   },
   shadow: {
     name: 'Crust Shadow',
-    node: 'wss://rpc-shadow.crust.network',
+    node: '',
     icon: 'shadow.svg',
     nativeToken: 'CSM',
     paraId: 2012,
@@ -419,7 +418,6 @@ export const polkadotParachains: Networks = {
     ...resolveOnfinalityUrl('bifrost-polkadot'),
     icon: 'bifrost.svg',
     paraId: 2030,
-    getApi: getBitfrostApi,
     isTransferable: true,
     tokenTransferMethod: 'tokens.transfer(recipient,id,amount)'
   },
