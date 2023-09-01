@@ -36,7 +36,7 @@ export const standalones: Networks = {
   edgeware: {
     name: 'Edgeware',
     icon: 'edgeware-circle.svg',
-    ...resolveOnfinalityUrl('edgeware'),
+    node: 'wss://mainnet2.edgewa.re',
   },
   chainx: {
     name: 'ChainX',
