@@ -79,14 +79,17 @@ const connect = async ({
 
   const api = getApi({ provider, types })
 
+  ;(wsApi || api).on('ready', () => {
+    console.log(`Connected to ${nodeName}`)
+    updatePropertiesByNetwork(api, network)
+  })
+
   try {
     const apiReady = await api.isReadyOrError
     const wsApiReady = await wsApi?.isReadyOrError
 
     mixedApis[network] = apiReady
     wsApis[network] = wsApiReady
-
-    await updatePropertiesByNetwork(api, network)
 
     if (validatorsStakingNetworks.includes(network)) {
       await getValidatorsData(wsApi, network)
