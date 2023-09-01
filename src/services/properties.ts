@@ -71,7 +71,6 @@ const getPropertiesByNetwork = async (api: ApiPromise, network: string): Promise
     tokenTransferMethod
   } = networks[network]
 
-
   const baseInfo = {
     icon,
     name,
