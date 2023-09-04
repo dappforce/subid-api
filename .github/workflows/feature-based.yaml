@@ -11,7 +11,7 @@ jobs:
     # runs-on: private-runners
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Extract branch name
         shell: bash
         run: echo "name=$(echo ${GITHUB_REF#refs/heads/} | sed 's/^deploy\///')" >> $GITHUB_ENV
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout main
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Extract branch name
         shell: bash
