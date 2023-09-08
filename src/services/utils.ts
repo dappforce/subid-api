@@ -161,3 +161,7 @@ export const axiosGetRequest = async (url: string) => {
     return undefined
   }
 }
+
+export const parseStringValue = (value: string): string => {
+  return value.replace(/,/g, '')
+}
