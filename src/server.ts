@@ -94,3 +94,8 @@ export const startHttpServer = (apis: Connections) => {
     log.info(`HTTP server started on port ${port}`)
   })
 }
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  // Application specific logging, throwing an error, or other logic here
+});
