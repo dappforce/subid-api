@@ -16,6 +16,7 @@ import createCollatorStakingRouter from './collatorStaking/index';
 import createValidatorStakingRouter from './validatorStaking/index';
 import createFeesRouter from './fees'
 import { Connections } from '../connections'
+import createCreatorStakingRouter from './creatorStaking'
 
 export const createRoutes = (apis: Connections) => {
   const router = Router()
@@ -107,6 +108,8 @@ export const createRoutes = (apis: Connections) => {
   router.use('/accounts', asyncErrorHandler(createInterestingAccountsRouter(apis.mixedApis)))
   router.use('/staking/collator', asyncErrorHandler(createCollatorStakingRouter(apis.mixedApis)))
   router.use('/staking/validator', asyncErrorHandler(createValidatorStakingRouter(apis)))
+  router.use('/staking/creator', asyncErrorHandler(createCreatorStakingRouter(apis)))
+  
   router.use('/fees', asyncErrorHandler(createFeesRouter(apis.mixedApis)))
 
   return router
