@@ -65,7 +65,13 @@ export const standalones: Networks = {
     name: 'Crust',
     icon: 'crust.svg',
     ...resolveOnfinalityUrl('crust'),
-  }
+  },
+  joystream: {
+    name: 'Joystream',
+    icon: 'joystream.png',
+    node: 'wss://rpc.joystream.org',
+    isTransferable: true
+  },
 }
 
 export const kusamaParachains: Networks = {
