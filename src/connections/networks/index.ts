@@ -19,6 +19,11 @@ export const standalones: Networks = {
     isMixedConnection: true,
     isTransferable: true
   },
+  rococo: {
+    name: 'Rococo',
+    node: 'wss://rococo-rpc.polkadot.io',
+    icon: 'kusama.svg',
+  },
   polkadot: {
     name: 'Polkadot',
     ...resolveOnfinalityUrl('polkadot'),
