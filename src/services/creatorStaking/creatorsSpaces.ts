@@ -3,7 +3,7 @@ import Cache from '../../cache'
 import { ONE_HOUR } from '../../constant'
 import { soonsocialGraphQlClient } from '../../constant/graphQlClients'
 
-const creatorsSpacesCache = new Cache('creators-spaces', ONE_HOUR * 24)
+const creatorsSpacesCache = new Cache('creators-spaces', ONE_HOUR)
 
 type CreatorsSpacesInfo = {
   spaceIds: string[]

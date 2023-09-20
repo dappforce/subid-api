@@ -11,7 +11,7 @@ type RegisteredCreator = {
   state: RegisteredState
 }
 
-const creatorsListCache = new Cache('creators-list', ONE_HOUR * 24)
+const creatorsListCache = new Cache('creators-list', ONE_HOUR)
 
 export const getCreatorsList = async ({
   apis
