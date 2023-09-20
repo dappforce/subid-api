@@ -15,8 +15,8 @@ const createValidatorStakingRouter = (apis: Connections) => {
   router.get('/list/:network/', async function (req, res) {
     const { network } = req.params
     const info = await getValidatorsList({
-      // apis: apis.wsApis,
-      apis: apis.mixedApis,
+      apis: apis.wsApis,
+      // apis: apis.mixedApis,
       network
     })
 
