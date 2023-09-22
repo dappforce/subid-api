@@ -1,4 +1,4 @@
-import { ChainName, FN } from '@polkawallet/bridge'
+import { ChainId, FN } from '@polkawallet/bridge'
 import { ApiPromise, Apis } from '../../connections/networks/types'
 import { getCrossChainAdapter } from './utils'
 import { firstValueFrom } from 'rxjs'
@@ -74,7 +74,7 @@ async function getCrossChainTransferFee ({ from, token, to }: GetTransferFeePara
     const adapter = await getCrossChainAdapter(from, node)
     if (!adapter) return amount
     amount = await firstValueFrom(adapter.estimateTxFee({
-      to: to as ChainName,
+      to: to as ChainId,
       address: dummyAccount,
       amount: FN.ZERO,
       signer: dummyAccount,

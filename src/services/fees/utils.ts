@@ -1,4 +1,4 @@
-import { ApiProvider, Bridge, ChainName } from '@polkawallet/bridge'
+import { ApiProvider, Bridge, ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AstarAdapter, ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
 import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
@@ -21,7 +21,7 @@ import { QuartzAdapter } from '@polkawallet/bridge/adapters/unique'
 import { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 import { firstValueFrom } from 'rxjs'
 
-const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainName?: ChainName }> = {
+const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainName?: ChainId }> = {
   polkadot: {
     adapter: new PolkadotAdapter(),
   },
@@ -106,7 +106,7 @@ const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainNa
 function getPolkawalletChainName (chain: string) {
   const chainData = transferAdapters[chain]
   if (!chainData) return undefined
-  return chainData.chainName || chain as ChainName
+  return chainData.chainName || chain as ChainId
 }
 
 const provider = new ApiProvider()
@@ -120,7 +120,7 @@ export async function getCrossChainAdapter (chain: string, connectNode?: string)
   const adapter = bridge.findAdapter(chainName)
   if (connectNode) {
     await firstValueFrom(provider.connectFromChain([ chainName ], { [chainName]: [ connectNode ] }))
-    await adapter.setApi(provider.getApi(chainName))
+    await adapter.init(provider.getApi(chainName))
   }
   return adapter
 }
