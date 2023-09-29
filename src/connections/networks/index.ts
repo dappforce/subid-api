@@ -270,7 +270,7 @@ export const kusamaParachains: Networks = {
   },
   zeitgeist: {
     name: 'Zeitgeist',
-    ...resolveOnfinalityUrl('zeitgeist'),
+    node: 'wss://zeitgeist-rpc.dwellir.com',
     icon: 'zeitgeist.png',
     paraId: 2101,
     vestingMethod: 'vesting.vest',
