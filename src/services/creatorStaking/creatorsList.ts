@@ -3,12 +3,12 @@ import Cache from "../../cache"
 import { ONE_HOUR } from "../../constant"
 import { parseStringValue } from "../utils"
 
-type RegisteredState = 'Registered' | 'Unregistered'
+type RegisteredStatus = 'Active' | 'Inactive'
 
 type RegisteredCreator = {
   spaceId: string
   stakeholder: string
-  state: RegisteredState
+  status: RegisteredStatus
 }
 
 const creatorsListCache = new Cache('creators-list', ONE_HOUR)

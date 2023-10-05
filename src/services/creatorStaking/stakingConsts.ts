@@ -16,13 +16,13 @@ export const getStakingConsts = async ({ apis }: CreatorStakingProps) => {
 
   if (!cacheData || forceUpdate) {
     const unbondingPeriodInEras = api.consts.creatorStaking.unbondingPeriodInEras.toJSON()
-    const minimumStakingAmount = api.consts.creatorStaking.minimumStakingAmount.toJSON()
-    const minimumRemainingAmount = api.consts.creatorStaking.minimumRemainingAmount.toJSON()
+    const minimumStakingAmount = api.consts.creatorStaking.minimumStake.toJSON()
+    const minimumRemainingAmount = api.consts.creatorStaking.minimumRemainingFreeBalance.toJSON()
     const maxNumberOfStakersPerCreator =
-      api.consts.creatorStaking.maxNumberOfStakersPerCreator.toJSON()
-    const maxEraStakeValues = api.consts.creatorStaking.maxEraStakeValues.toJSON()
+      api.consts.creatorStaking.maxNumberOfBackersPerCreator.toJSON()
+    const maxEraStakeValues = api.consts.creatorStaking.maxEraStakeItems.toJSON()
     const currentAnnualInflation =
-      api.consts.creatorStaking.currentAnnualInflation.toHuman() as string
+      api.consts.creatorStaking.annualInflation.toHuman() as string
 
     stakingConstsCache.set(undefined, {
       unbondingPeriodInEras,

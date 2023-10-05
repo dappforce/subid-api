@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { Connections } from '../../connections'
 import {
+  getCreatorRewards,
   getCreatorsEraStake,
   getGeneralEraInfo,
   getGeneralStakerInfo,
@@ -79,6 +80,16 @@ const createCreatorStakingRouter = (apis: Connections) => {
     const info = await getStakerRewards({
       account: account as string,
       spaceIds: ids as string
+    })
+
+    res.send(info)
+  })
+
+  router.get('/rewards', async function (req, res) {
+    const { id } = req.query
+
+    const info = await getCreatorRewards({
+      spaceId: id as string
     })
 
     res.send(info)

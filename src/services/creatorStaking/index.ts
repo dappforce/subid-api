@@ -8,7 +8,7 @@ export type CreatorStakingProps = WithApis
 
 type EraInfo = {
   rewards: {
-    stakers: string
+    backers: string
     creators: string
   }
   staked: string
@@ -58,7 +58,7 @@ export const getCreatorsEraStake = async ({ apis, era, spaceIds }: CreatorsEraSt
   const ids = spaceIds.split(',')
 
   const queryParams = ids.map((spaceId) => {
-    return [api.query.creatorStaking.creatorEraStake, [spaceId, era]]
+    return [api.query.creatorStaking.creatorStakeInfoByEra, [spaceId, era]]
   })
 
   const eraStakesResult = await api.queryMulti(queryParams as any)
@@ -88,7 +88,7 @@ export const getGeneralStakerInfo = async ({ apis, spaceIds, account }: GeneralS
   const ids = spaceIds.split(',')
 
   const queryParams = ids.map((spaceId) => {
-    return [api.query.creatorStaking.generalStakerInfo, [account, spaceId]]
+    return [api.query.creatorStaking.generalBackerInfo, [account, spaceId]]
   })
 
   const generalStakerInfoResult = await api.queryMulti(queryParams as any)
@@ -116,7 +116,7 @@ export const getStakerLedger = async ({ apis, account }: StakerLedgerProps) => {
 
   if (!api) return undefined
 
-  const stakerLedger = await api.query.creatorStaking.ledger(account)
+  const stakerLedger = await api.query.creatorStaking.backerLocksByAccount(account)
 
   return stakerLedger.toJSON()
 }
@@ -132,22 +132,62 @@ export const getStakerRewards = async ({ account, spaceIds }: StakerRewardsProps
     .filter(isDef)
     .map((id) => parseInt(id))
 
-  const result = await rpcQuery(
+  const rewardsResult = await rpcQuery(
     subsocial.node,
     {
       moduleName: 'creatorStaking',
-      method: 'estimatedStakerRewardsByCreator'
+      method: 'estimatedBackerRewardsByCreator'
     },
     [account, spaceIdsArray]
   )
 
-  const rewardsBySpaceId = {}
+  const availableClaimResult = await rpcQuery(
+    subsocial.node,
+    {
+      moduleName: 'creatorStaking',
+      method: 'availableClaimsByBacker'
+    },
+    [account]
+  )
 
-  result?.forEach((data) => {
+  const rewardsBySpaceId = {}
+  const availableClaimsBySpaceId = {}
+
+  rewardsResult?.forEach((data) => {
     const [spaceId, rewards] = data
 
     rewardsBySpaceId[spaceId] = rewards
   })
 
-  return rewardsBySpaceId
+  availableClaimResult.forEach(([spaceId, claimCount]) => {
+    availableClaimsBySpaceId[spaceId] = claimCount
+  })
+
+  return { availableClaimsBySpaceId, rewardsBySpaceId }
+}
+
+type CreatorRewardsProps = {
+  spaceId: string
+}
+
+export const getCreatorRewards = async ({ spaceId }: CreatorRewardsProps) => {
+  const rewards = await rpcQuery(
+    subsocial.node,
+    {
+      moduleName: 'creatorStaking',
+      method: 'estimatedCreatorRewards'
+    },
+    [parseInt(spaceId)]
+  )
+
+  const availableClaims = await rpcQuery(
+    subsocial.node,
+    {
+      moduleName: 'creatorStaking',
+      method: 'availableClaimsByCreator'
+    },
+    [parseInt(spaceId)]
+  )
+
+  return { rewards, availableClaims }
 }
