@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import timeout from 'connect-timeout'
-import { reqTimeoutSecs, allowedOrigins, port } from './constant/env'
+import { reqTimeoutSecs , allowedOrigins, port } from './constant/env'
 import { newLogger } from '@subsocial/utils'
 
 import { createRoutes } from './routes'

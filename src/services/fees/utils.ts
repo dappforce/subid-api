@@ -1,11 +1,11 @@
-import { ApiProvider, Bridge, ChainName } from '@polkawallet/bridge'
+import { ApiProvider, Bridge, ChainId } from '@polkawallet/bridge'
 import { AcalaAdapter, KaruraAdapter } from '@polkawallet/bridge/adapters/acala'
 import { AstarAdapter, ShidenAdapter } from '@polkawallet/bridge/adapters/astar'
 import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
 import { AltairAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ShadowAdapter } from '@polkawallet/bridge/adapters/crust'
 import { CrabAdapter } from '@polkawallet/bridge/adapters/darwinia'
-import { BasiliskAdapter } from '@polkawallet/bridge/adapters/hydradx'
+import { BasiliskAdapter, HydraAdapter } from '@polkawallet/bridge/adapters/hydradx'
 import { IntegriteeAdapter } from '@polkawallet/bridge/adapters/integritee'
 import { InterlayAdapter, KintsugiAdapter } from '@polkawallet/bridge/adapters/interlay'
 import { KicoAdapter } from '@polkawallet/bridge/adapters/kico'
@@ -17,110 +17,120 @@ import { HeikoAdapter, ParallelAdapter } from '@polkawallet/bridge/adapters/para
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
 import { PolkadotAdapter, KusamaAdapter } from '@polkawallet/bridge/adapters/polkadot'
 import { StatemineAdapter } from '@polkawallet/bridge/adapters/statemint'
-import { QuartzAdapter } from '@polkawallet/bridge/adapters/unique'
+import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
 import { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 import { firstValueFrom } from 'rxjs'
 
-const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainName?: ChainName }> = {
+const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainName?: ChainId }> = {
   polkadot: {
-    adapter: new PolkadotAdapter(),
+    adapter: new PolkadotAdapter()
   },
   kusama: {
-    adapter: new KusamaAdapter(),
+    adapter: new KusamaAdapter()
   },
   karura: {
-    adapter: new KaruraAdapter(),
-  },
-  bifrost: {
-    adapter: new BifrostAdapter(),
+    adapter: new KaruraAdapter()
   },
   astar: {
-    adapter: new AstarAdapter(),
+    adapter: new AstarAdapter()
   },
   shiden: {
-    adapter: new ShidenAdapter(),
+    adapter: new ShidenAdapter()
   },
   acala: {
-    adapter: new AcalaAdapter(),
+    adapter: new AcalaAdapter()
   },
   statemine: {
-    adapter: new StatemineAdapter(),
+    adapter: new StatemineAdapter()
   },
   statemint: {
-    adapter: new StatemineAdapter(),
+    adapter: new StatemineAdapter()
   },
   altair: {
-    adapter: new AltairAdapter(),
+    adapter: new AltairAdapter()
   },
   shadow: {
-    adapter: new ShadowAdapter(),
+    adapter: new ShadowAdapter()
   },
   'darwinia-crab-parachain': {
     adapter: new CrabAdapter(),
     chainName: 'crab'
   },
   basilisk: {
-    adapter: new BasiliskAdapter(),
-  },
-  integritee: {
-    adapter: new IntegriteeAdapter(),
+    adapter: new BasiliskAdapter()
   },
   kintsugi: {
-    adapter: new KintsugiAdapter(),
+    adapter: new KintsugiAdapter()
   },
   interlay: {
-    adapter: new InterlayAdapter(),
+    adapter: new InterlayAdapter()
   },
   kico: {
-    adapter: new KicoAdapter(),
+    adapter: new KicoAdapter()
   },
   pichiu: {
-    adapter: new PichiuAdapter(),
+    adapter: new PichiuAdapter()
   },
   calamari: {
-    adapter: new CalamariAdapter(),
+    adapter: new CalamariAdapter()
   },
   moonbeam: {
-    adapter: new MoonbeamAdapter(),
+    adapter: new MoonbeamAdapter()
   },
   moonriver: {
-    adapter: new MoonriverAdapter(),
+    adapter: new MoonriverAdapter()
+  },
+  khala: {
+    adapter: new KhalaAdapter()
+  },
+  bifrostKusama: {
+    adapter: new BifrostAdapter(),
+    chainName: 'bifrost'
+  },
+  integritee: {
+    adapter: new IntegriteeAdapter()
   },
   turing: {
-    adapter: new TuringAdapter(),
+    adapter: new TuringAdapter()
   },
   parallel: {
-    adapter: new ParallelAdapter(),
+    adapter: new ParallelAdapter()
   },
-  parallelHeiko: {
+  heiko: {
     adapter: new HeikoAdapter(),
     chainName: 'heiko'
   },
-  khala: {
-    adapter: new KhalaAdapter(),
+  hydra: {
+    adapter: new HydraAdapter(),
+    chainName: 'hydradx'
   },
-  quartz: {
-    adapter: new QuartzAdapter(),
-  },
+  zeitgeist: {
+    adapter: new ZeitgeistAdapter()
+  }
 }
-function getPolkawalletChainName (chain: string) {
+function getPolkawalletChainName(chain: string) {
   const chainData = transferAdapters[chain]
   if (!chainData) return undefined
-  return chainData.chainName || chain as ChainName
+  return chainData.chainName || (chain as ChainId)
 }
 
 const provider = new ApiProvider()
 
-const bridge = new Bridge({ adapters: Object.values(transferAdapters).map(({ adapter }) => adapter) })
+const bridge = new Bridge({
+  adapters: Object.values(transferAdapters).map(({ adapter }) => adapter)
+})
 
-export async function getCrossChainAdapter (chain: string, connectNode?: string): Promise<BaseCrossChainAdapter | undefined> {
+export async function getCrossChainAdapter(
+  chain: string,
+  connectNode?: string
+): Promise<BaseCrossChainAdapter | undefined> {
   const chainName = getPolkawalletChainName(chain)
   if (!chainName) return undefined
 
   const adapter = bridge.findAdapter(chainName)
   if (connectNode) {
-    await firstValueFrom(provider.connectFromChain([ chainName ], { [chainName]: [ connectNode ] }))
-    await adapter.setApi(provider.getApi(chainName))
+    await firstValueFrom(provider.connectFromChain([chainName], { [chainName]: [connectNode] }))
+    await adapter.init(provider.getApi(chainName))
   }
   return adapter
 }
