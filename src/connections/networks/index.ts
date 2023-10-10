@@ -26,13 +26,6 @@ export const standalones: Networks = {
     isMixedConnection: true,
     isTransferable: true
   },
-  sora: {
-    name: 'SORA',
-    icon: 'sora-substrate.svg',
-    ...resolveOnfinalityUrl('sora'),
-    nativeToken: 'XOR',
-    isTransferable: true
-  },
   edgeware: {
     name: 'Edgeware',
     icon: 'edgeware-circle.svg',
@@ -113,13 +106,6 @@ export const kusamaParachains: Networks = {
     vestingMethod: 'vesting.claim',
     isTransferable: true,
     tokenTransferMethod: 'assets.transfer(id,recipient,amount)'
-  },
-  kilt: {
-    name: 'Kilt Spiritnet',
-    ...resolveOnfinalityUrl('spiritnet'),
-    icon: 'kilt.png',
-    paraId: 2086,
-    isTransferable: true
   },
   polkasmith: {
     name: 'PolkaSmith',
@@ -227,6 +213,13 @@ export const kusamaParachains: Networks = {
     isTransferable: true,
     tokenTransferMethod: 'assets.transfer(id,recipient,amount)'
   },
+  kilt: {
+    name: 'Kilt Spiritnet',
+    ...resolveOnfinalityUrl('spiritnet'),
+    icon: 'kilt.png',
+    paraId: 2086,
+    isTransferable: true
+  },
   picasso: {
     name: 'Picasso',
     node: 'wss://rpc.composablenodes.tech',
@@ -254,18 +247,10 @@ export const kusamaParachains: Networks = {
   },
   robonomics: {
     name: 'Robonomics',
-    ...resolveOnfinalityUrl('robonomics'),
+    node: 'wss://kusama.rpc.robonomics.network/',
     icon: 'robonomics.svg',
     paraId: 2048,
     vestingMethod: 'vesting.vest',
-    isTransferable: true
-  },
-  quartz: {
-    name: 'QUARTZ by UNIQUE',
-    ...resolveOnfinalityUrl('quartz'),
-    icon: 'quartz.png',
-    paraId: 2095,
-    vestingMethod: 'vesting.claim',
     isTransferable: true
   },
   zeitgeist: {
@@ -482,7 +467,7 @@ export const polkadotParachains: Networks = {
     icon: 'subdao.png',
     paraId: 2018
   },
-  'parallel': {
+  parallel: {
     name: 'Parallel',
     ...resolveOnfinalityUrl('parallel'),
     icon: 'parallel.svg',
