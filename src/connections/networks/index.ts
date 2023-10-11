@@ -123,9 +123,9 @@ export const kusamaParachains: Networks = {
     tokenTransferMethod: 'tokens.transfer(recipient,id,amount)'
   },
   statemine: {
-    name: 'Statemine',
-    ...resolveOnfinalityUrl('statemine'),
-    icon: 'statemine.svg',
+    name: 'Asset Hub Kusama',
+    node: 'wss://kusama-rpc.polkadot.io',
+    icon: 'asset-hub-kusama.svg',
     paraId: 1000,
     isTransferable: true,
     tokenTransferMethod: 'assets.transfer(id,recipient,amount)'
@@ -421,9 +421,9 @@ export const polkadotParachains: Networks = {
     tokenTransferMethod: 'tokens.transfer(recipient,id,amount)'
   },
   statemint: {
-    name: 'Statemint',
+    name: 'Asset Hub Polkadot',
     ...resolveOnfinalityUrl('statemint'),
-    icon: 'statemine.svg',
+    icon: 'asset-hub-polkadot.svg',
     paraId: 1000,
     isTransferable: true,
     tokenTransferMethod: 'assets.transfer(id,recipient,amount)'
