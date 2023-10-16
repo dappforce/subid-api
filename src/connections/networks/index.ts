@@ -124,7 +124,7 @@ export const kusamaParachains: Networks = {
   },
   statemine: {
     name: 'Asset Hub Kusama',
-    node: 'wss://kusama-rpc.polkadot.io',
+    node: 'wss://kusama-asset-hub-rpc.polkadot.io',
     icon: 'asset-hub-kusama.svg',
     paraId: 1000,
     isTransferable: true,
@@ -422,7 +422,7 @@ export const polkadotParachains: Networks = {
   },
   statemint: {
     name: 'Asset Hub Polkadot',
-    ...resolveOnfinalityUrl('statemint'),
+    node: 'wss://polkadot-asset-hub-rpc.polkadot.io',
     icon: 'asset-hub-polkadot.svg',
     paraId: 1000,
     isTransferable: true,
