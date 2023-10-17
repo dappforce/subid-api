@@ -80,7 +80,7 @@ type GeneralStakerInfoProps = CreatorStakingProps & {
   spaceIds: string
 }
 
-export const getGeneralStakerInfo = async ({ apis, spaceIds, account }: GeneralStakerInfoProps) => {
+export const getGeneralBackerInfo = async ({ apis, spaceIds, account }: GeneralStakerInfoProps) => {
   const api = apis.subsocial
 
   if (!api) return undefined
@@ -107,18 +107,18 @@ export const getGeneralStakerInfo = async ({ apis, spaceIds, account }: GeneralS
   return generalStakerInfo
 }
 
-type StakerLedgerProps = CreatorStakingProps & {
+type BackerLedgerProps = CreatorStakingProps & {
   account: string
 }
 
-export const getStakerLedger = async ({ apis, account }: StakerLedgerProps) => {
+export const getBackerLocksByAccount = async ({ apis, account }: BackerLedgerProps) => {
   const api = apis.subsocial
 
   if (!api) return undefined
 
-  const stakerLedger = await api.query.creatorStaking.backerLocksByAccount(account)
+  const backerLedger = await api.query.creatorStaking.backerLocksByAccount(account)
 
-  return stakerLedger.toJSON()
+  return backerLedger.toJSON()
 }
 
 type StakerRewardsProps = {
@@ -126,7 +126,7 @@ type StakerRewardsProps = {
   spaceIds: string
 }
 
-export const getStakerRewards = async ({ account, spaceIds }: StakerRewardsProps) => {
+export const getBackerRewards = async ({ account, spaceIds }: StakerRewardsProps) => {
   const spaceIdsArray = spaceIds
     .split(',')
     .filter(isDef)

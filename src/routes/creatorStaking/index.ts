@@ -4,9 +4,9 @@ import {
   getCreatorRewards,
   getCreatorsEraStake,
   getGeneralEraInfo,
-  getGeneralStakerInfo,
-  getStakerLedger,
-  getStakerRewards
+  getGeneralBackerInfo,
+  getBackerLocksByAccount,
+  getBackerRewards
 } from '../../services/creatorStaking'
 import { getCreatorsList } from '../../services/creatorStaking/creatorsList'
 import { getCreatorsSpacesInfo } from '../../services/creatorStaking/creatorsSpaces'
@@ -45,9 +45,9 @@ const createCreatorStakingRouter = (apis: Connections) => {
     res.send(info)
   })
 
-  router.get('/staker/info', async function (req, res) {
+  router.get('/backer/info', async function (req, res) {
     const { account, ids } = req.query
-    const info = await getGeneralStakerInfo({
+    const info = await getGeneralBackerInfo({
       apis: apis.mixedApis,
       account: account as string,
       spaceIds: ids as string
@@ -56,9 +56,9 @@ const createCreatorStakingRouter = (apis: Connections) => {
     res.send(info)
   })
 
-  router.get('/staker/ledger', async function (req, res) {
+  router.get('/backer/ledger', async function (req, res) {
     const { account } = req.query
-    const info = await getStakerLedger({
+    const info = await getBackerLocksByAccount({
       apis: apis.mixedApis,
       account: account as string
     })
@@ -74,10 +74,10 @@ const createCreatorStakingRouter = (apis: Connections) => {
     res.send(info)
   })
 
-  router.get('/staker/rewards', async function (req, res) {
+  router.get('/backer/rewards', async function (req, res) {
     const { account, ids } = req.query
 
-    const info = await getStakerRewards({
+    const info = await getBackerRewards({
       account: account as string,
       spaceIds: ids as string
     })
