@@ -6,7 +6,9 @@ import { newLogger } from '@subsocial/utils'
 
 import { createRoutes } from './routes'
 import { Connections } from './connections'
-import { getOrCreateRedisCache } from './cache/redisCache';
+import { getOrCreateRedisCache } from './cache/redisCache'
+import { validatorStakingInfoCache } from './services/validatorStaking'
+import { relayChains } from './services/crowdloan/types'
 
 require('dotenv').config()
 
@@ -79,7 +81,12 @@ export const startHttpServer = (apis: Connections) => {
   redis?.on('connect', async () => {
     log.info('Redis connected')
     redisCache.setIsConnectionClosed(false)
-    await redisCache.checkConnection({ showLogs: true })
+
+    await redisCache.checkConnection({ showLogs: true });
+
+    relayChains.forEach((network) => {
+      validatorStakingInfoCache.set(network, undefined)
+    })
   })
 
   // for parsing multipart/form-data
@@ -91,6 +98,6 @@ export const startHttpServer = (apis: Connections) => {
 }
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+  console.log('Unhandled Rejection at:', promise, 'reason:', reason)
   // Application specific logging, throwing an error, or other logic here
-});
+})

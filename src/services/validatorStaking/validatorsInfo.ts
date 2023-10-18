@@ -10,7 +10,7 @@ import { Connections } from '../../connections'
 import { relayChains } from '../crowdloan/types'
 import { isEmptyObj, newLogger } from '@subsocial/utils'
 
-const validatorStakingInfoCache = new Cache<any>('validator-staking-info', FIVE_MINUTES)
+export const validatorStakingInfoCache = new Cache<any>('validator-staking-info', FIVE_MINUTES)
 
 const log = newLogger('ValidatorStakingInfo')
 
