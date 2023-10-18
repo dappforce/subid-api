@@ -8,9 +8,11 @@ import type { DeriveStakingElected, DeriveStakingWaiting } from '@polkadot/api-d
 import Cache from '../../cache'
 import { Connections } from '../../connections'
 import { relayChains } from '../crowdloan/types'
-import { isEmptyObj } from '@subsocial/utils'
+import { isEmptyObj, newLogger } from '@subsocial/utils'
 
 const validatorStakingInfoCache = new Cache<any>('validator-staking-info', FIVE_MINUTES)
+
+const log = newLogger('ValidatorStakingInfo')
 
 /// https://github.dev/polkadot-js/apps/blob/fb8f7fe86b2945fcc71dcd11c67ebeeab35ee37e/packages/page-staking/src/useSortedTargets.ts#L120-L121
 const parseValidatorStakingInfo = (
@@ -127,7 +129,7 @@ function mergeValidatorsInfo(
   }
 }
 
-export const getValidatorsData = async (api: any, network: string) => {
+export const getValidatorsData = async (api: ApiPromise, network: string) => {
   try {
     const cacheData = await validatorStakingInfoCache.get(network)
 
@@ -142,7 +144,7 @@ export const getValidatorsData = async (api: any, network: string) => {
     const waitingInfo = await api.derive.staking.waitingInfo()
     const activeEra = await api.query.staking.activeEra()
 
-    const era = activeEra.toJSON().index
+    const era = (activeEra.toJSON() as any).index
 
     const baseInfo = mergeValidatorsInfo(api, electedInfo, waitingInfo)
 
@@ -158,22 +160,27 @@ export const getValidatorsData = async (api: any, network: string) => {
       info,
       loading: false
     })
-  } catch {
+  } catch (e) {
     await validatorStakingInfoCache.set(network, {
       info: undefined,
       loading: false
     })
+
+    log.error('Error getting validators data by netwrok', network, e)
   }
 }
 
 export const getValidatorsDataByRelayChains = async (apis: Connections) => {
-  relayChains.forEach((network: string) => {
+  const promise = relayChains.map(async (network: string) => {
     const api = apis.wsApis?.[network]
     // const api = apis.mixedApis?.[network]
 
     if (!api) return
-    getValidatorsData(api, network)
+
+    await getValidatorsData(api, network)
   })
+
+  await Promise.all(promise)
 }
 
 export const getValidatorsList = async ({ apis, network }: ValidatorStakingProps) => {
@@ -186,7 +193,7 @@ export const getValidatorsList = async ({ apis, network }: ValidatorStakingProps
   const forceUpdate = needUpdate && (await needUpdate())
   const cacheData = await validatorStakingInfoCache.get(network)
 
-  if (!cacheData || forceUpdate) {
+  if (!cacheData?.info || forceUpdate) {
     getValidatorsData(api, network)
   }
 
