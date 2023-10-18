@@ -1,13 +1,12 @@
 import express from 'express'
 import cors from 'cors'
 import timeout from 'connect-timeout'
-import { reqTimeoutSecs , allowedOrigins, port } from './constant/env'
+import { reqTimeoutSecs, allowedOrigins, port } from './constant/env'
 import { newLogger } from '@subsocial/utils'
 
 import { createRoutes } from './routes'
 import { Connections } from './connections'
 import { getOrCreateRedisCache } from './cache/redisCache';
-import { getValidatorsDataByRelayChains } from './services/validatorStaking'
 
 require('dotenv').config()
 
@@ -69,22 +68,18 @@ export const startHttpServer = (apis: Connections) => {
     log.warn('Error connecting to redis', error?.message)
   })
 
-  redis?.on('close', () => {
+  redis?.on('close', async () => {
     if (redisCache.isConnectionClosed) return
     redisCache.setIsRedisReady(false)
     redisCache.setIsConnectionClosed(true)
 
     log.warn('Redis connection closed')
-
-    getValidatorsDataByRelayChains(apis)
   })
 
   redis?.on('connect', async () => {
     log.info('Redis connected')
     redisCache.setIsConnectionClosed(false)
     await redisCache.checkConnection({ showLogs: true })
-
-    getValidatorsDataByRelayChains(apis)
   })
 
   // for parsing multipart/form-data
