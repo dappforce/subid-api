@@ -554,7 +554,7 @@ export const polkadotParachains: Networks = {
     paraId: 2011,
     vestingMethod: 'vesting.vest'
   },
-  'hydra': {
+  hydradx: {
     name: 'HydraDX',
     icon: 'snakenet.svg',
     ...resolveOnfinalityUrl('hydradx'),

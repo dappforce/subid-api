@@ -100,9 +100,8 @@ const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainNa
     adapter: new HeikoAdapter(),
     chainName: 'heiko'
   },
-  hydra: {
+  hydradx: {
     adapter: new HydraAdapter(),
-    chainName: 'hydradx'
   },
   zeitgeist: {
     adapter: new ZeitgeistAdapter()
