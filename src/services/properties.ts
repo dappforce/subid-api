@@ -31,7 +31,7 @@ const customFetchAssetsRegistryByNetwork = {
   interlay: getKintsugiAssetRegistry,
   kintsugi: getKintsugiAssetRegistry,
   basilisk: commonAssetRegistries['assetRegistry.metadataMap'],
-  hydra: commonAssetRegistries['assetRegistry.metadataMap'],
+  hydradx: commonAssetRegistries['assetRegistry.metadataMap'],
   astar: commonAssetRegistries['assets.metadata'],
   shiden: commonAssetRegistries['assets.metadata'],
   statemine: commonAssetRegistries['assets.metadata'],
