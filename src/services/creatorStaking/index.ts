@@ -33,13 +33,13 @@ export const getGeneralEraInfo = async ({
     api.query.creatorStaking.nextEraStartingBlock
   ])
 
-  const blockPerEra = api.consts.creatorStaking.blockPerEra.toJSON()
+  const blockPerEra = api.consts.creatorStaking.blockPerEra.toPrimitive()
 
   const eraInfo = await api.query.creatorStaking.generalEraInfo(currentEraCodec)
 
   return {
-    currentEra: currentEraCodec.toJSON() as string,
-    nextEraBlock: nextEraBlockCodec.toJSON() as string,
+    currentEra: currentEraCodec.toPrimitive() as string,
+    nextEraBlock: nextEraBlockCodec.toPrimitive() as string,
     blockPerEra: blockPerEra as string,
     ...(eraInfo.toJSON() as EraInfo)
   }
@@ -47,7 +47,7 @@ export const getGeneralEraInfo = async ({
 
 type CreatorsEraStakeProps = CreatorStakingProps & {
   era: string
-  spaceIds: string
+  spaceIds: string[]
 }
 
 export const getCreatorsEraStake = async ({ apis, era, spaceIds }: CreatorsEraStakeProps) => {
@@ -55,9 +55,8 @@ export const getCreatorsEraStake = async ({ apis, era, spaceIds }: CreatorsEraSt
 
   if (!api) return undefined
 
-  const ids = spaceIds.split(',')
 
-  const queryParams = ids.map((spaceId) => {
+  const queryParams = spaceIds.map((spaceId) => {
     return [api.query.creatorStaking.creatorStakeInfoByEra, [spaceId, era]]
   })
 
@@ -65,9 +64,9 @@ export const getCreatorsEraStake = async ({ apis, era, spaceIds }: CreatorsEraSt
 
   const eraStakes = {}
 
-  ids.forEach((id, index) => {
+  spaceIds.forEach((id, index) => {
     const value = eraStakesResult[index]?.toJSON()
-    if (value || value !== null) {
+    if (value) {
       eraStakes[id] = value
     }
   })
@@ -77,7 +76,7 @@ export const getCreatorsEraStake = async ({ apis, era, spaceIds }: CreatorsEraSt
 
 type GeneralStakerInfoProps = CreatorStakingProps & {
   account: string
-  spaceIds: string
+  spaceIds: string[]
 }
 
 export const getGeneralBackerInfo = async ({ apis, spaceIds, account }: GeneralStakerInfoProps) => {
@@ -85,9 +84,7 @@ export const getGeneralBackerInfo = async ({ apis, spaceIds, account }: GeneralS
 
   if (!api) return undefined
 
-  const ids = spaceIds.split(',')
-
-  const queryParams = ids.map((spaceId) => {
+  const queryParams = spaceIds.map((spaceId) => {
     return [api.query.creatorStaking.generalBackerInfo, [account, spaceId]]
   })
 
@@ -95,7 +92,7 @@ export const getGeneralBackerInfo = async ({ apis, spaceIds, account }: GeneralS
 
   const generalStakerInfo = {}
 
-  ids.forEach((id, index) => {
+  spaceIds.forEach((id, index) => {
     const value = generalStakerInfoResult[index]?.toJSON() as any
     if (value || value !== null) {
       const stakes = value.stakes.sort((a, b) => new BN(b.era).minus(new BN(a.era)))
@@ -123,12 +120,11 @@ export const getBackerLocksByAccount = async ({ apis, account }: BackerLedgerPro
 
 type StakerRewardsProps = {
   account: string
-  spaceIds: string
+  spaceIds: string[]
 }
 
 export const getBackerRewards = async ({ account, spaceIds }: StakerRewardsProps) => {
   const spaceIdsArray = spaceIds
-    .split(',')
     .filter(isDef)
     .map((id) => parseInt(id))
 

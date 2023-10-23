@@ -39,7 +39,7 @@ const createCreatorStakingRouter = (apis: Connections) => {
     const info = await getCreatorsEraStake({
       apis: apis.mixedApis,
       era: era as string,
-      spaceIds: ids as string
+      spaceIds: (ids as string).split(',')
     })
 
     res.send(info)
@@ -50,7 +50,7 @@ const createCreatorStakingRouter = (apis: Connections) => {
     const info = await getGeneralBackerInfo({
       apis: apis.mixedApis,
       account: account as string,
-      spaceIds: ids as string
+      spaceIds: (ids as string).split(',')
     })
 
     res.send(info)
@@ -79,7 +79,7 @@ const createCreatorStakingRouter = (apis: Connections) => {
 
     const info = await getBackerRewards({
       account: account as string,
-      spaceIds: ids as string
+      spaceIds: (ids as string).split(',')
     })
 
     res.send(info)
