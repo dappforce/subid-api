@@ -101,7 +101,7 @@ export const kusamaParachains: Networks = {
   },
   heiko: {
     name: 'Parallel Heiko',
-    ...resolveOnfinalityUrl('parallel-heiko'),
+    node: 'wss://heiko-rpc.parallel.fi',
     icon: 'parallel.svg',
     nativeToken: 'HKO',
     paraId: 2085,
@@ -241,7 +241,7 @@ export const kusamaParachains: Networks = {
   },
   bitCountry: {
     name: 'Bit.Country Pioneer',
-    ...resolveOnfinalityUrl('pioneer'),
+    node: 'wss://pioneer-rpc-3.bit.country/wss',
     icon: 'bitcountry.svg',
     paraId: 2096,
     vestingMethod: 'vesting.vest',
@@ -342,7 +342,7 @@ export const kusamaParachains: Networks = {
   },
   invArch: {
     name: 'InvArch Tinkernet',
-    ...resolveOnfinalityUrl('invarch-tinkernet'),
+    node: 'wss://tinkernet-rpc.dwellir.com',
     nativeToken: 'TNKR',
     paraId: 2125,
     icon: 'invArch.png',
@@ -471,7 +471,7 @@ export const polkadotParachains: Networks = {
   },
   parallel: {
     name: 'Parallel',
-    ...resolveOnfinalityUrl('parallel'),
+    node: 'wss://parallel-rpc.dwellir.com',
     icon: 'parallel.svg',
     paraId: 2012,
     vestingMethod: 'vesting.claim',
@@ -519,7 +519,7 @@ export const polkadotParachains: Networks = {
   },
   interlay: {
     name: 'Interlay',
-    ...resolveOnfinalityUrl('interlay'),
+    node: 'wss://interlay-rpc.dwellir.com',
     icon: 'interlay.svg',
     paraId: 2032,
     nativeToken: 'INTR',
@@ -557,7 +557,7 @@ export const polkadotParachains: Networks = {
   hydradx: {
     name: 'HydraDX',
     icon: 'snakenet.svg',
-    ...resolveOnfinalityUrl('hydradx'),
+    node: 'wss://hydradx-rpc.dwellir.com',
     paraId: 2034,
     vestingMethod: 'vesting.claim',
     isTransferable: true,
