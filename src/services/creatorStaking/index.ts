@@ -85,7 +85,7 @@ export const getGeneralBackerInfo = async ({ apis, spaceIds, account }: GeneralS
   if (!api) return undefined
 
   const queryParams = spaceIds.map((spaceId) => {
-    return [api.query.creatorStaking.generalBackerInfo, [account, spaceId]]
+    return [api.query.creatorStaking.backerStakesByCreator, [account, spaceId]]
   })
 
   const generalStakerInfoResult = await api.queryMulti(queryParams as any)
