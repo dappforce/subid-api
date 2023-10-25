@@ -1,7 +1,7 @@
 import { gql } from 'graphql-request'
 import Cache from '../../cache'
 import { ONE_HOUR } from '../../constant'
-import { soonsocialGraphQlClient } from '../../constant/graphQlClients'
+import { subsocialGraphQlClient } from '../../constant/graphQlClients'
 
 const creatorsSpacesCache = new Cache('creators-spaces', ONE_HOUR)
 
@@ -27,7 +27,7 @@ export const GET_CREATORS_SPACES = gql`
 `
 
 export const getCreatorsSpacesInfo = async ({ spaceIds }: CreatorsSpacesInfo) => {
-  const result = await soonsocialGraphQlClient.request(GET_CREATORS_SPACES, { ids: spaceIds })
+  const result = await subsocialGraphQlClient.request(GET_CREATORS_SPACES, { ids: spaceIds })
 
   if (!result) return []
 
