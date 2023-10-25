@@ -4,7 +4,7 @@ import { redisCallWrapper } from './utils'
 
 const log = newLogger('Cache data')
 
-export const getRedisKey = (prefix: string, key: string) => `${prefix}:${key}`
+export const getRedisKey = (prefix: string, key?: string) => key ? `${prefix}:${key}` : prefix
 
 const getLastUpdate = (prefix: string) => `${prefix}:last-update-time`
 
@@ -48,7 +48,7 @@ class Cache<T extends any> {
     return false
   }
 
-  get = async (key: string) => {
+  get = async (key?: string) => {
     const redisCache = getOrCreateRedisCache()
     const isRedisReady = await redisCache.checkConnection({ showLogs: false })
 
@@ -59,11 +59,11 @@ class Cache<T extends any> {
 
       return result ? (JSON.parse(result) as T) : undefined
     } else {
-      return this.cache[key]
+      return this.cache[key || this.prefix]
     }
   }
 
-  set = async <E extends any>(key: string, value: E) => {
+  set = async <E extends any>(key?: string, value?: E) => {
     const redisCache = getOrCreateRedisCache()
     const isRedisReady = await redisCache.checkConnection({ showLogs: false })
 
@@ -72,7 +72,7 @@ class Cache<T extends any> {
         redis?.set(getRedisKey(this.prefix, key), JSON.stringify(value))
       )
     } else {
-      this.cache[key] = value
+      this.cache[key || this.prefix] = value
     }
   }
 
