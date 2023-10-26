@@ -4,8 +4,8 @@ import { RelayChain } from '../../services/crowdloan/types'
 
 export const subsocial = {
   name: 'Subsocial',
-  node: 'https://para.subsocial.network',
-  wsNode: 'wss://para.subsocial.network',
+  node: 'wss://para.subsocial.network',
+  // wsNode: 'wss://para.subsocial.network',
   icon: 'subsocial-parachain.svg',
   paraId: 2100,
   ipfs: 'https://ipfs.subsocial.network',
