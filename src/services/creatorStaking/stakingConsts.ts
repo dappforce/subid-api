@@ -22,8 +22,6 @@ export const getStakingConsts = async ({ apis }: CreatorStakingProps) => {
       api.consts.creatorStaking.maxNumberOfBackersPerCreator.toJSON()
     const maxEraStakeValues = api.consts.creatorStaking.maxEraStakeItems.toJSON()
     const blocksPerEra = api.consts.creatorStaking.blockPerEra.toJSON()
-    const currentAnnualInflation =
-      api.consts.creatorStaking.annualInflation.toHuman() as string
 
     stakingConstsCache.set(undefined, {
       unbondingPeriodInEras,
@@ -32,7 +30,7 @@ export const getStakingConsts = async ({ apis }: CreatorStakingProps) => {
       maxNumberOfStakersPerCreator,
       maxEraStakeValues,
       blocksPerEra,
-      currentAnnualInflation: currentAnnualInflation.replace('%', '')
+      currentAnnualInflation: 0
     })
   }
 
