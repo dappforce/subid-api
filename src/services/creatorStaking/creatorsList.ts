@@ -1,9 +1,9 @@
 import { CreatorStakingProps } from "."
 import Cache from "../../cache"
-import { ONE_HOUR } from "../../constant"
+import { FIVE_MINUTES } from "../../constant"
 import { parseStringValue } from "../utils"
 
-type RegisteredStatus = 'Active' | 'Inactive'
+type RegisteredStatus = 'Active' | Record<'Inactive', string>
 
 type RegisteredCreator = {
   spaceId: string
@@ -11,7 +11,7 @@ type RegisteredCreator = {
   status: RegisteredStatus
 }
 
-const creatorsListCache = new Cache('creators-list', ONE_HOUR)
+const creatorsListCache = new Cache('creators-list', FIVE_MINUTES)
 
 export const getCreatorsList = async ({
   apis
