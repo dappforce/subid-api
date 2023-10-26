@@ -1,8 +1,8 @@
 import { CreatorStakingProps } from "."
 import Cache from "../../cache"
-import { ONE_HOUR } from "../../constant"
+import { FIVE_MINUTES } from "../../constant"
 
-const stakingConstsCache = new Cache('creator-consts', ONE_HOUR * 24)
+const stakingConstsCache = new Cache('creator-consts', FIVE_MINUTES)
 
 export const getStakingConsts = async ({ apis }: CreatorStakingProps) => {
   const api = apis.subsocial
@@ -21,6 +21,7 @@ export const getStakingConsts = async ({ apis }: CreatorStakingProps) => {
     const maxNumberOfStakersPerCreator =
       api.consts.creatorStaking.maxNumberOfBackersPerCreator.toJSON()
     const maxEraStakeValues = api.consts.creatorStaking.maxEraStakeItems.toJSON()
+    const blocksPerEra = api.consts.creatorStaking.blockPerEra.toJSON()
     const currentAnnualInflation =
       api.consts.creatorStaking.annualInflation.toHuman() as string
 
@@ -30,6 +31,7 @@ export const getStakingConsts = async ({ apis }: CreatorStakingProps) => {
       minimumRemainingAmount,
       maxNumberOfStakersPerCreator,
       maxEraStakeValues,
+      blocksPerEra,
       currentAnnualInflation: currentAnnualInflation.replace('%', '')
     })
   }

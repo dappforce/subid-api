@@ -1,9 +1,9 @@
 import { gql } from 'graphql-request'
 import Cache from '../../cache'
-import { ONE_HOUR } from '../../constant'
+import { FIVE_MINUTES } from '../../constant'
 import { subsocialGraphQlClient } from '../../constant/graphQlClients'
 
-const creatorsSpacesCache = new Cache('creators-spaces', ONE_HOUR)
+const creatorsSpacesCache = new Cache('creators-spaces', FIVE_MINUTES)
 
 type CreatorsSpacesInfo = {
   spaceIds: string[]
@@ -18,6 +18,7 @@ export const GET_CREATORS_SPACES = gql`
       name
       about
       email
+      postsCount
       linksOriginal
       ownedByAccount {
         id
