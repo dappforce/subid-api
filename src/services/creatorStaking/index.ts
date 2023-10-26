@@ -1,8 +1,9 @@
 import { WithApis } from '../types'
 import BN from 'bignumber.js'
 import { isDef } from '@subsocial/utils'
-import { subsocial } from '../../connections/networks'
 import { rpcQuery } from '../rpc'
+
+const subsocialRpcNode = 'https://para.subsocial.network'
 
 export type CreatorStakingProps = WithApis
 
@@ -129,7 +130,7 @@ export const getBackerRewards = async ({ account, spaceIds }: StakerRewardsProps
     .map((id) => parseInt(id))
 
   const rewardsResult = await rpcQuery(
-    subsocial.node,
+    subsocialRpcNode,
     {
       moduleName: 'creatorStaking',
       method: 'estimatedBackerRewardsByCreator'
@@ -138,7 +139,7 @@ export const getBackerRewards = async ({ account, spaceIds }: StakerRewardsProps
   )
 
   const availableClaimResult = await rpcQuery(
-    subsocial.node,
+    subsocialRpcNode,
     {
       moduleName: 'creatorStaking',
       method: 'availableClaimsByBacker'
@@ -168,7 +169,7 @@ type CreatorRewardsProps = {
 
 export const getCreatorRewards = async ({ spaceId }: CreatorRewardsProps) => {
   const rewards = await rpcQuery(
-    subsocial.node,
+    subsocialRpcNode,
     {
       moduleName: 'creatorStaking',
       method: 'estimatedCreatorRewards'
@@ -177,7 +178,7 @@ export const getCreatorRewards = async ({ spaceId }: CreatorRewardsProps) => {
   )
 
   const availableClaims = await rpcQuery(
-    subsocial.node,
+    subsocialRpcNode,
     {
       moduleName: 'creatorStaking',
       method: 'availableClaimsByCreator'
