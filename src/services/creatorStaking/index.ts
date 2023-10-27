@@ -20,6 +20,24 @@ type GeneralEraInfo = EraInfo & {
   currentEra: string
   nextEraBlock: string
   blockPerEra: string
+  backerCount: string
+}
+
+export const getBackerCount = async ({ apis }: CreatorStakingProps) => {
+  const api = apis.subsocial
+
+  if (!api) return undefined
+
+  const backersCount = await api.query.creatorStaking.backerStakesByCreator.keys()
+
+  if(backersCount) {
+    const backers = backersCount.map((key) => key.toHuman()[0]) as string[]
+    const backersSet = new Set(backers)
+
+    return backersSet.size.toString()
+  }
+
+  return undefined
 }
 
 export const getGeneralEraInfo = async ({
@@ -38,9 +56,12 @@ export const getGeneralEraInfo = async ({
 
   const eraInfo = await api.query.creatorStaking.generalEraInfo(currentEraCodec)
 
+  const backerCount = await getBackerCount({apis})
+
   return {
     currentEra: currentEraCodec.toPrimitive() as string,
     nextEraBlock: nextEraBlockCodec.toPrimitive() as string,
+    backerCount,
     blockPerEra: blockPerEra as string,
     ...(eraInfo.toJSON() as EraInfo)
   }

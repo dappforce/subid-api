@@ -6,7 +6,8 @@ import {
   getGeneralEraInfo,
   getGeneralBackerInfo,
   getBackerLocksByAccount,
-  getBackerRewards
+  getBackerRewards,
+  getBackerCount
 } from '../../services/creatorStaking'
 import { getCreatorsList } from '../../services/creatorStaking/creatorsList'
 import { getCreatorsSpacesInfo } from '../../services/creatorStaking/creatorsSpaces'
@@ -51,6 +52,14 @@ const createCreatorStakingRouter = (apis: Connections) => {
       apis: apis.mixedApis,
       account: account as string,
       spaceIds: (ids as string).split(',')
+    })
+
+    res.send(info)
+  })
+
+  router.get('/backer/count', async function (_req, res) {
+    const info = await getBackerCount({
+      apis: apis.mixedApis,
     })
 
     res.send(info)
