@@ -35,7 +35,7 @@ export const createRoutes = (apis: Connections) => {
   const getConnectedNetworks = (req) => {
     const { networks } = req.query
 
-    return networks.filter((network) => isApiConnected(apis.mixedApis[network]))
+    return networks?.filter((network) => isApiConnected(apis.mixedApis[network])) || []
   }
 
   router.get(
@@ -78,7 +78,7 @@ export const createRoutes = (apis: Connections) => {
 
       const result = balances.map((balance: any) => {
         const { status, value } = balance
-        
+
         return status === 'fulfilled' && value
       })
 
