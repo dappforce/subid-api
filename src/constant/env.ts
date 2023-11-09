@@ -1,4 +1,4 @@
-export const reqTimeoutSecs = 40
+export const reqTimeoutSecs = 60
 
 export const allowedOrigins = [ 'sub.id', 'polkaverse.com', 'subsocial.network' ] // process.env.CORS_ALLOWED_ORIGIN?.split(',').map(x => x.trim()) || ['http://localhost']
 
