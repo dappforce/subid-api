@@ -12,11 +12,12 @@ import createHealthRouter from './health'
 import createStatemineAssetsRouter from './statemine'
 import createInterestingAccountsRouter from './interestingAccounts'
 import { checkAccount } from './utils'
-import createCollatorStakingRouter from './collatorStaking/index';
-import createValidatorStakingRouter from './validatorStaking/index';
+import createCollatorStakingRouter from './collatorStaking/index'
+import createValidatorStakingRouter from './validatorStaking/index'
 import createFeesRouter from './fees'
 import { Connections } from '../connections'
 import createCreatorStakingRouter from './creatorStaking'
+import { isDef } from '@subsocial/utils';
 
 export const createRoutes = (apis: Connections) => {
   const router = Router()
@@ -29,6 +30,12 @@ export const createRoutes = (apis: Connections) => {
     } else {
       res.status(404).send('Network is not connected!')
     }
+  }
+
+  const getConnectedNetworks = (req) => {
+    const { networks } = req.query
+
+    return networks.filter((network) => isApiConnected(apis.mixedApis[network]))
   }
 
   router.get(
@@ -54,10 +61,41 @@ export const createRoutes = (apis: Connections) => {
   )
 
   router.get(
+    '/balances/',
+    asyncErrorHandler(async (req, res) => {
+      const { account } = req.query
+
+      const networks = getConnectedNetworks(req)
+
+      const promise = networks.map(async (network) => {
+        const balance = await getBalanceByAccount(apis.mixedApis[network], account, network)
+
+        return balance ? { network, info: balance } : undefined
+      })
+
+      const balances = await Promise.allSettled(promise)
+
+
+      const result = balances.map((balance: any) => {
+        const { status, value } = balance
+        
+        return status === 'fulfilled' && value
+      })
+
+      res.send(result.filter(isDef))
+    })
+  )
+
+  router.get(
     '/identities',
     asyncErrorHandler(async (req, res) => {
       const { accounts } = req.query
-      const identities = await getIdentities({ accounts: accounts as string[], apis: apis.mixedApis })
+
+      const identities = await getIdentities({
+        accounts: accounts as string[],
+        apis: apis.mixedApis
+      })
+
       res.send(identities)
     })
   )
@@ -87,7 +125,11 @@ export const createRoutes = (apis: Connections) => {
     checkAccount,
     asyncErrorHandler(async (req, res) => {
       const { spaceId, account } = req.params
-      const domainStruct = await getDomainByAccountAndSpaceId({ apis: apis.mixedApis, spaceId, account })
+      const domainStruct = await getDomainByAccountAndSpaceId({
+        apis: apis.mixedApis,
+        spaceId,
+        account
+      })
       res.send(domainStruct)
     })
   )
@@ -109,9 +151,8 @@ export const createRoutes = (apis: Connections) => {
   router.use('/staking/collator', asyncErrorHandler(createCollatorStakingRouter(apis.mixedApis)))
   router.use('/staking/validator', asyncErrorHandler(createValidatorStakingRouter(apis)))
   router.use('/staking/creator', asyncErrorHandler(createCreatorStakingRouter(apis)))
-  
+
   router.use('/fees', asyncErrorHandler(createFeesRouter(apis.mixedApis)))
 
   return router
 }
-

@@ -7,7 +7,7 @@ import { ApiPromise } from '@polkadot/api'
 import { getIdentityFromChain } from './getIdentityFromChain'
 import { pick } from 'lodash'
 
-const updateDelay = 24 * 3600 * 1000 //seconds
+const updateDelay = 1 * 3600 * 1000 //seconds
 export const identitiesInfoCache = new Cache<any>('identities', updateDelay)
 
 type FetchType = 'blockchain' | 'squid'
@@ -49,26 +49,31 @@ type GetIdentitiesProps = WithApis & {
 }
 
 export const getIdentities = async ({
-  apis: { kusama , polkadot },
+  apis: { kusama, polkadot },
   accounts
 }: GetIdentitiesProps) => {
-  const identities = {}
+  try {
+    const identities = {}
 
-  const filteredAccounts = accounts.filter((account) => isDef(account) && !!account)
+    const filteredAccounts = accounts.filter((account) => isDef(account) && !!account)
 
-  const [kusamaIdentity, polkadotIdentity, subsocialIdentity] = await Promise.all([
-    getIdentity(kusama, filteredAccounts, 'kusama', 'squid'),
-    getIdentity(polkadot, filteredAccounts, 'polkadot', 'squid'),
-    getSubsococilaIdentity(filteredAccounts)
-  ])
+    const [kusamaIdentity, polkadotIdentity, subsocialIdentity] = await Promise.all([
+      getIdentity(kusama, filteredAccounts, 'kusama', 'squid'),
+      getIdentity(polkadot, filteredAccounts, 'polkadot', 'squid'),
+      getSubsococilaIdentity(filteredAccounts)
+    ])
 
-  filteredAccounts.forEach((account) => {
-    identities[account] = {
-      kusama: kusamaIdentity?.[account],
-      polkadot: polkadotIdentity?.[account],
-      subsocial: subsocialIdentity?.[account]
-    }
-  })
+    filteredAccounts.forEach((account) => {
+      identities[account] = {
+        kusama: kusamaIdentity?.[account],
+        polkadot: polkadotIdentity?.[account],
+        subsocial: subsocialIdentity?.[account]
+      }
+    })
 
-  return identities
+    return identities
+  } catch (e) {
+    console.error(e)
+    return {}
+  }
 }
