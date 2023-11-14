@@ -24,7 +24,7 @@ const getNativeTokenBalance = async (api: ApiPromise, account: string) => {
     totalBalance: totalBalance?.toString(),
     reservedBalance: reserved?.toString(),
     frozenBalance: frozen?.toString(),
-    freeBalance: freeBalance?.lt(new BN(0)) ? '0' : freeBalance?.toString(),
+    freeBalance: freeBalance?.gt(new BN(0)) ? freeBalance?.toString() : '0',
     lockedBalance: lockedBalance?.toString(),
     locks: locks.map(({ id, amount, reasons }) => ({ id: id.toHuman(), amount: amount.toString(), reasons}))
   }
