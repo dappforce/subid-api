@@ -5,6 +5,8 @@ import { getOrCreateQueue } from './queue'
 
 export const txAggregatorClient = new GraphQLClient('http://localhost:8080/graphql')
 
+const ADD_QUEUE_JOB_NAME = 'REFRESH_TX_HISTORY_FOR_ACCOUNT_ON_DEMAND'
+
 const buildGetAccountTxHistoryQuery = (networks?: string[], events?: string[]) => {
   const networkFilterValues = networks ? ', blockchainTag: $networks' : ''
   const networkFilterParams = networks ? ', $networks: [BlockchainTag!]' : ''
@@ -77,13 +79,9 @@ export const getAccountTxHistoryWithQueue = async (props: GetAccountTransactions
 
   const address = props.address
 
-  const taskPayload = {
-    publicKey: u8aToHex(decodeAddress(address))
-  }
-
+  const jobId = `${address}-${ADD_QUEUE_JOB_NAME}`
   const queue = getOrCreateQueue()
-
-  const jobByAddress = await queue.getJob(address)
+  const jobByAddress = await queue.getJob(jobId)
 
   let actualData = false
 
@@ -98,9 +96,14 @@ export const getAccountTxHistoryWithQueue = async (props: GetAccountTransactions
     }
   } else {
     console.log('Create new job')
-    await queue.add('REFRESH_TX_HISTORY_FOR_ACCOUNT_ON_DEMAND', taskPayload, {
+
+    const taskPayload = {
+      publicKey: u8aToHex(decodeAddress(address))
+    }
+
+    await queue.add(ADD_QUEUE_JOB_NAME, taskPayload, {
       attempts: 5,
-      jobId: address,
+      jobId,
       removeOnComplete: false,
       removeOnFail: false
     })
