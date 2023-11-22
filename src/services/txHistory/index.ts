@@ -3,7 +3,9 @@ import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
 import { getOrCreateQueue } from './queue'
 
-export const txAggregatorClient = new GraphQLClient('http://localhost:8080/graphql')
+export const txAggregatorClient = new GraphQLClient(
+  'https://first-test-aggregation.subsocial.network/graphql'
+)
 
 const ADD_QUEUE_JOB_NAME = 'REFRESH_TX_HISTORY_FOR_ACCOUNT_ON_DEMAND'
 
