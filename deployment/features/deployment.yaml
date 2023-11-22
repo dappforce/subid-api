@@ -14,10 +14,10 @@ spec:
         app: subid-back-<BRANCH>
     spec:
       imagePullSecrets:
-        - name: dockerhub 
+        - name: dockerhub
       containers:
         - name: subid-back-<BRANCH>
-          image: <IMAGE> 
+          image: <IMAGE>
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3001
@@ -36,6 +36,15 @@ spec:
             - name: REDIS_HOST
               value: redis-master.default
             - name: REDIS_PORT
+              value: '6379'
+
+            - name: AGGREGATOR_REDIS_HOST
+              value: redis-aggregation-first-test-master.default
+            - name: AGGREGATOR_REDIS_PASSWORD
+              value: 2KK6RWECApEZJjmd
+            - name: AGGREGATOR_REDIS_PREFIX
+              value: aggregator_queue_first-test
+            - name: AGGREGATOR_REDIS_PORT
               value: '6379'
           envFrom:
             - secretRef:
