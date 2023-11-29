@@ -8,7 +8,7 @@ const coingeckoUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency
 const pricesCache = new Cache<any>('prices', FIVE_MINUTES)
 
 const fetchPrices = async (ids: string) => {
-  const cacheData = await pricesCache.get(cacheKey) || ({} as any)
+  const cacheData = (await pricesCache.get(cacheKey)) || ({} as any)
 
   if (cacheData?.loading) return
 
@@ -17,10 +17,14 @@ const fetchPrices = async (ids: string) => {
     loading: true
   })
 
-  const newPrices = await axiosGetRequest(`${coingeckoUrl}&ids=${ids}`)
+  const newPrices = await axiosGetRequest(`${coingeckoUrl}&ids=${ids}`, { timeout: 5000 })
+
+  const newData = newPrices
+    ? { values: newPrices, isCachedData: false, lastUpdate: new Date().getTime() }
+    : { ...cacheData, isCachedData: true }
 
   await pricesCache.set(cacheKey, {
-    values: newPrices,
+    ...newData,
     loading: false
   })
 }
@@ -41,5 +45,7 @@ export const getPrices = async (ids: string) => {
 
   const cachedData = await pricesCache.get(cacheKey)
 
-  return cachedData?.values || []
+  const { values, isCachedData, lastUpdate } = cachedData || {}
+
+  return { prices: values || [], isCachedData: isCachedData, lastUpdate: lastUpdate }
 }
