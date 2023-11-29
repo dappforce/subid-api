@@ -6,7 +6,7 @@ import { isEthereumAddress } from '@polkadot/util-crypto'
 import { SubsocialApi } from "@subsocial/api"
 import { newLogger, nonEmptyArr } from "@subsocial/utils"
 import networks from "../connections/networks"
-import axios from "axios"
+import axios, { AxiosRequestConfig } from "axios"
 import { RelayChain } from "./crowdloan/types"
 import registry from "@subsocial/api/utils/registry"
 import Cache from "../cache"
@@ -148,9 +148,9 @@ export async function runQueryOrUndefined<T extends ApiPromise | SubsocialApi>(
   return query(api)
 }
 
-export const axiosGetRequest = async (url: string) => {
+export const axiosGetRequest = async (url: string, config?: AxiosRequestConfig<any>) => {
   try {
-    const res = await axios.get(url)
+    const res = await axios.get(url, config)
     if (res.status !== 200) {
       log.error(`Failed request to ${url} with status`, res.status)
     }
