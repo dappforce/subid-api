@@ -73,6 +73,7 @@ async function getCrossChainTransferFee ({ from, token, to }: GetTransferFeePara
   try {
     const adapter = await getCrossChainAdapter(from, node)
     if (!adapter) return amount
+
     amount = await firstValueFrom(adapter.estimateTxFee({
       to: to as ChainId,
       address: dummyAccount,
