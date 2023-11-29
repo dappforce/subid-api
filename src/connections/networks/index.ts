@@ -9,14 +9,15 @@ export const subsocial = {
   icon: 'subsocial-parachain.svg',
   paraId: 2100,
   ipfs: 'https://ipfs.subsocial.network',
-  offchain: 'https://api.subsocial.network'
+  offchain: 'https://api.subsocial.network',
+  isTransferable: true
 }
 
 export const standalones: Networks = {
   kusama: {
     name: 'Kusama',
     ...resolveOnfinalityUrl('kusama'),
-    wsNode: 'wss://kusama-rpc.polkadot.io',
+    // wsNode: 'wss://kusama-rpc.polkadot.io',
     icon: 'kusama.svg',
     isMixedConnection: true,
     isTransferable: true
@@ -24,7 +25,7 @@ export const standalones: Networks = {
   polkadot: {
     name: 'Polkadot',
     ...resolveOnfinalityUrl('polkadot'),
-    wsNode: 'wss://rpc.polkadot.io',
+    // wsNode: 'wss://rpc.polkadot.io',
     icon: 'polkadot.svg',
     isMixedConnection: true,
     isTransferable: true

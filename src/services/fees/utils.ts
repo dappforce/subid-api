@@ -20,6 +20,7 @@ import { StatemineAdapter } from '@polkawallet/bridge/adapters/statemint'
 import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
 import { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 import { firstValueFrom } from 'rxjs'
+import { SubsocialAdapter } from './custom/SubsocialAdapter'
 
 const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainName?: ChainId }> = {
   polkadot: {
@@ -105,6 +106,9 @@ const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainNa
   },
   zeitgeist: {
     adapter: new ZeitgeistAdapter()
+  },
+  subsocial: {
+    adapter: new SubsocialAdapter(),
   }
 }
 function getPolkawalletChainName(chain: string) {

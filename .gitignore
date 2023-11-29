@@ -53,6 +53,7 @@ build/
 # Optional npm cache directory
 .npm
 .vscode
+.yarn
 
 # Optional eslint cache
 .eslintcache
