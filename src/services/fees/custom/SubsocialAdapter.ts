@@ -6,16 +6,32 @@ import { SubmittableExtrinsic } from '@polkadot/api/types'
 import { DeriveBalancesAll } from '@polkadot/api-derive/balances/types'
 import { ISubmittableResult } from '@polkadot/types/types'
 import {
-  createPolkadotXCMAccount,
   createPolkadotXCMAsset,
   createPolkadotXCMDest,
   createRouteConfigs,
-  validateAddress
+  validateAddress,
 } from '@polkawallet/bridge/utils'
-import { BalanceData, BasicToken, ChainId, chains, TransferParams } from '@polkawallet/bridge'
-import { BalanceAdapter, BalanceAdapterConfigs } from '@polkawallet/bridge/balance-adapter'
-import { ApiNotFound, InvalidAddress, TokenNotFound } from '@polkawallet/bridge/errors'
+import {
+  BalanceData,
+  BasicToken,
+  ChainId,
+  chains,
+  TransferParams,
+} from '@polkawallet/bridge'
+import {
+  BalanceAdapter,
+  BalanceAdapterConfigs,
+} from '@polkawallet/bridge/balance-adapter'
+import {
+  ApiNotFound,
+  InvalidAddress,
+  TokenNotFound,
+} from '@polkawallet/bridge/errors'
 import { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
+import {
+  getDestAccountType,
+} from './utils/destination-utils'
+import { createPolkadotXCMAccount, getValidDestAddrType } from './utils'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
 // @ts-ignore
@@ -25,11 +41,18 @@ chains.subsocial = {
   type: 'substrate',
   icon: 'https://sub.id/images/subsocial.svg',
   paraChainId: 2101,
-  ss58Prefix: 28
+  ss58Prefix: 28,
 }
 export const subsocialRouteConfigs = createRouteConfigs('subsocial' as any, [
   {
     to: 'hydradx',
+    token: 'SUB',
+    xcm: {
+      fee: { token: 'SUB', amount: '65000000' },
+    },
+  },
+  {
+    to: 'moonbeam',
     token: 'SUB',
     xcm: {
       fee: { token: 'SUB', amount: '65000000' },
@@ -158,7 +181,16 @@ class SubsocialBaseAdapter extends BaseCrossChainAdapter {
 
     const { address, amount, to, token } = params
 
-    if (!validateAddress(address)) throw new InvalidAddress(address)
+    const addrType = getValidDestAddrType(address, token, to)
+
+    const accountId =
+      addrType === 'ethereum'
+        ? address
+        : this.api.createType('AccountId32', address).toHex()
+
+    const accountType = getDestAccountType(address, token, to)
+
+    if (!validateAddress(address, addrType)) throw new InvalidAddress(address)
 
     const toChain = chains[to]
 
@@ -166,13 +198,18 @@ class SubsocialBaseAdapter extends BaseCrossChainAdapter {
       throw new TokenNotFound(token)
     }
 
-    const accountId = this.api?.createType('AccountId32', address).toHex()
+    // const accountId = this.api?.createType('AccountId32', address).toHex()
     const paraChainId = toChain.paraChainId
     const rawAmount = amount.toChainData()
 
     return this.api?.tx.polkadotXcm.limitedReserveTransferAssets(
       createPolkadotXCMDest(this.api, paraChainId),
-      createPolkadotXCMAccount(this.api, accountId),
+      createPolkadotXCMAccount(
+        this.api,
+        accountId,
+        addrType === 'ethereum' ? 'key' : 'id',
+        accountType
+      ),
       createPolkadotXCMAsset(this.api, rawAmount, 'NATIVE'),
       0,
       this.getDestWeight(token, to)?.toString() as any
@@ -187,4 +224,3 @@ export class SubsocialAdapter extends SubsocialBaseAdapter {
     super(chains.subsocial, subsocialRouteConfigs, subsocialTokensConfig)
   }
 }
-

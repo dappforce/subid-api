@@ -19,8 +19,26 @@ const fetchPrices = async (ids: string) => {
 
   const newPrices = await axiosGetRequest(`${coingeckoUrl}&ids=${ids}`, { timeout: 5000 })
 
+  const subsocialTokenPrice = await axiosGetRequest(
+    'https://api.hydradx.io/hydradx-ui/v1/stats/price/24',
+    { timeout: 5000 }
+  )
+
+  const subsocialTokenPriceObj = subsocialTokenPrice
+    ? {
+        id: 'subsocial',
+        symbol: 'sub',
+        name: 'Subsocial',
+        current_price: subsocialTokenPrice?.[0]?.price_usd
+      }
+    : {}
+
   const newData = newPrices
-    ? { values: newPrices, isCachedData: false, lastUpdate: new Date().getTime() }
+    ? {
+        values: [ ...newPrices, subsocialTokenPriceObj ],
+        isCachedData: false,
+        lastUpdate: new Date().getTime()
+      }
     : { ...cacheData, isCachedData: true }
 
   await pricesCache.set(cacheKey, {

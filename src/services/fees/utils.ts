@@ -11,7 +11,7 @@ import { InterlayAdapter, KintsugiAdapter } from '@polkawallet/bridge/adapters/i
 import { KicoAdapter } from '@polkawallet/bridge/adapters/kico'
 import { PichiuAdapter } from '@polkawallet/bridge/adapters/kylin'
 import { CalamariAdapter } from '@polkawallet/bridge/adapters/manta'
-import { MoonbeamAdapter, MoonriverAdapter } from '@polkawallet/bridge/adapters/moonbeam'
+import { MoonriverAdapter } from '@polkawallet/bridge/adapters/moonbeam'
 import { TuringAdapter } from '@polkawallet/bridge/adapters/oak'
 import { HeikoAdapter, ParallelAdapter } from '@polkawallet/bridge/adapters/parallel'
 import { KhalaAdapter } from '@polkawallet/bridge/adapters/phala'
@@ -21,6 +21,7 @@ import { ZeitgeistAdapter } from '@polkawallet/bridge/adapters/zeitgeist'
 import { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 import { firstValueFrom } from 'rxjs'
 import { SubsocialAdapter } from './custom/SubsocialAdapter'
+import { MoonbeamAdapter } from './custom/MoonbeamAdapter'
 
 const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainName?: ChainId }> = {
   polkadot: {
