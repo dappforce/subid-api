@@ -33,7 +33,7 @@ export const moonbeamRouteConfigs = createRouteConfigs('moonbeam', [
     to: 'subsocial' as any,
     token: 'SUB',
     xcm: {
-      fee: { token: 'SUB', amount: '225000000' },
+      fee: { token: 'SUB', amount: '1000000000' },
       weightLimit: DEST_WEIGHT,
     },
   },
