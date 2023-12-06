@@ -6,7 +6,7 @@ export const subsocial = {
   name: 'Subsocial',
   node: 'wss://para.subsocial.network',
   // wsNode: 'wss://para.subsocial.network',
-  icon: 'subsocial-parachain.svg',
+  icon: 'subsocial-pink.svg',
   paraId: 2100,
   ipfs: 'https://ipfs.subsocial.network',
   offchain: 'https://api.subsocial.network',
