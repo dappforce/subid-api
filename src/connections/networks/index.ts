@@ -144,7 +144,7 @@ export const kusamaParachains: Networks = {
   integritee: {
     name: 'Integritee Network',
     icon: 'integritee.svg',
-    node: 'wss://kusama.api.integritee.network',
+    node: 'wss://integritee-kusama.api.onfinality.io/public-ws',
     paraId: 2015,
     vestingMethod: 'vesting.vest',
     isTransferable: true

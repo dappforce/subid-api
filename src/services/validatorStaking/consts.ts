@@ -1,4 +1,4 @@
-import { ONE_HOUR } from '../../constant/index'
+import { ONE_HOUR } from '../../constant'
 import { ValidatorStakingProperties, ValidatorStakingProps } from './types'
 import Cache from '../../cache';
 
