@@ -52,8 +52,9 @@ build/
 
 # Optional npm cache directory
 .npm
-.vscode
 .yarn
+.pnp.loader.mjs
+.pnp.cjs
 
 # Optional eslint cache
 .eslintcache
