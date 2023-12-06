@@ -4,6 +4,7 @@ export * from './env'
 
 export const FIVE_MINUTES = 5 * 60 * SEC
 export const ONE_HOUR = 3600 * SEC
+export const ONE_DAY = 24 * 3600 * SEC
 
 export const TEN_MILLION = 10_000_000
 
