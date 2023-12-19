@@ -30,7 +30,7 @@ const createCreatorStakingRouter = (apis: Connections) => {
 
   router.get('/spaces/info', async function (req, res) {
     const { ids } = req.query
-    const info = await getCreatorsSpacesInfo({ spaceIds: ids as string[] })
+    const info = await getCreatorsSpacesInfo({ apis: apis.mixedApis, spaceIds: ids as string[] })
 
     res.send(info)
   })
@@ -59,7 +59,7 @@ const createCreatorStakingRouter = (apis: Connections) => {
 
   router.get('/backer/count', async function (_req, res) {
     const info = await getBackerCount({
-      apis: apis.mixedApis,
+      apis: apis.mixedApis
     })
 
     res.send(info)
