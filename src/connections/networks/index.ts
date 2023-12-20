@@ -395,6 +395,15 @@ export const kusamaParachains: Networks = {
     paraId: 2124,
     icon: 'amplitude.jpg',
     vestingMethod: 'vesting.vest'
+  },
+  quartz: {
+    name: 'Quartz',
+    node: 'wss://eu-ws-quartz.unique.network',
+    nativeToken: 'QTZ',
+    paraId: 2095,
+    icon: 'quartz.png',
+    vestingMethod: 'vesting.claim',
+    isTransferable: true
   }
 }
 
@@ -453,11 +462,11 @@ export const polkadotParachains: Networks = {
   litentry: {
     name: 'Litentry',
     ...resolveOnfinalityUrl('litentry'),
-    disabled: true,
     nativeToken: 'LIT',
     icon: 'litentry.png',
     paraId: 2013,
-    vestingMethod: 'vesting.vest'
+    vestingMethod: 'vesting.vest',
+    isTransferable: true
   },
   manta: {
     name: 'Manta',
@@ -545,7 +554,8 @@ export const polkadotParachains: Networks = {
     nativeToken: 'PHA',
     paraId: 2035,
     vestingMethod: 'vesting.vest',
-    tokenTransferMethod: 'assets.transfer(id,recipient,amount)'
+    tokenTransferMethod: 'assets.transfer(id,recipient,amount)',
+    isTransferable: true,
   },
   equilibrium: {
     name: 'Equilibrium',
@@ -591,11 +601,11 @@ export const polkadotParachains: Networks = {
   unique: {
     name: 'Unique Network',
     icon: 'unique.svg',
-    ...resolveOnfinalityUrl('unique'),
-    disabled: true,
+    node: 'wss://eu-ws.unique.network',
     nativeToken: 'UNQ',
     paraId: 2037,
-    vestingMethod: 'vesting.claim'
+    vestingMethod: 'vesting.claim',
+    isTransferable: true
   },
   geminis: {
     name: 'Geminis',
