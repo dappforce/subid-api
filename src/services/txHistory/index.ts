@@ -4,7 +4,7 @@ import { decodeAddress } from '@polkadot/util-crypto'
 import { getOrCreateQueue } from './queue'
 
 export const txAggregatorClient = new GraphQLClient(
-  'https://first-test-aggregation.subsocial.network/graphql'
+  'https://datasource-subquery-aggregation.subsocial.network/graphql'
 )
 
 const ADD_QUEUE_JOB_NAME = 'REFRESH_TX_HISTORY_FOR_ACCOUNT_ON_DEMAND'
@@ -107,7 +107,8 @@ export const getAccountTxHistoryWithQueue = async (props: GetAccountTransactions
       attempts: 5,
       jobId,
       removeOnComplete: false,
-      removeOnFail: false
+      removeOnFail: true,
+      priority: 1
     })
   }
 
