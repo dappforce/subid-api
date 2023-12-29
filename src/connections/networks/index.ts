@@ -24,7 +24,7 @@ export const standalones: Networks = {
   },
   polkadot: {
     name: 'Polkadot',
-    ...resolveOnfinalityUrl('polkadot'),
+    node: 'wss://polkadot-rpc-tn.dwellir.com',
     wsNode: 'wss://polkadot-rpc-tn.dwellir.com',
     icon: 'polkadot.svg',
     isMixedConnection: true,
