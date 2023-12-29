@@ -30,6 +30,8 @@ export const getTotalSupplyByNetwork = async (api: ApiPromise, network: string) 
 
 
 const circulationSupplyCache = new Cache<string>('circulationSupply', ONE_DAY)
+
+const treasuryAccount = '3qWxYkW2wKcj2A6s3hVMeoJrbmkGPjm8aMJWRaLL4HUjTk9j'
 export const getCirculatingSupplyByNetwork = async (api: ApiPromise, network: string) => {
   const cacheData = await circulationSupplyCache.get(network)
 
@@ -47,8 +49,10 @@ export const getCirculatingSupplyByNetwork = async (api: ApiPromise, network: st
       return acc.add(lock.reduce((acc, lock) => acc.add(lock.amount.toBn()), BN_ZERO))
     }, BN_ZERO)
 
+    const treasuryBalance = await api.query.system.account(treasuryAccount)
+
     const circulationSupply = convertToBalanceWithDecimal(
-      totalIssuance.sub(totalLocked).toString(),
+      totalIssuance.sub(totalLocked).sub(treasuryBalance.data.free).toString(),
       api.registry.chainDecimals[0]
     ).toString()
 
