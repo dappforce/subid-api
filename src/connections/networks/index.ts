@@ -441,6 +441,15 @@ export const polkadotParachains: Networks = {
     isTransferable: true,
     tokenTransferMethod: 'assets.transfer(id,recipient,amount)'
   },
+  'invArch-polkadot': {
+    name: 'InvArch',
+    node: 'wss://invarch-rpc.dwellir.com',
+    nativeToken: 'VARCH',
+    paraId: 3340,
+    icon: 'invArch-polkadot.svg',
+    vestingMethod: 'vesting.claim',
+    isTransferable: true
+  },
   clover: {
     name: 'Clover Finance',
     ...resolveOnfinalityUrl('clover'),
