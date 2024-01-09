@@ -3,9 +3,7 @@ import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
 import { getOrCreateQueue } from './queue'
 
-export const txAggregatorClient = new GraphQLClient(
-  'https://datasource-subquery-aggregation.subsocial.network/graphql'
-)
+export const txAggregatorClient = new GraphQLClient('http://localhost:8080/graphql')
 
 const ADD_QUEUE_JOB_NAME = 'REFRESH_TX_HISTORY_FOR_ACCOUNT_ON_DEMAND'
 
@@ -89,7 +87,6 @@ export const getAccountTxHistoryWithQueue = async (props: GetAccountTransactions
 
   if (jobByAddress) {
     const jobState = await jobByAddress.getState()
-    console.log('Job state', jobState)
 
     if (jobState === 'completed') {
       await jobByAddress.remove()
@@ -97,8 +94,6 @@ export const getAccountTxHistoryWithQueue = async (props: GetAccountTransactions
       actualData = true
     }
   } else {
-    console.log('Create new job')
-
     const taskPayload = {
       publicKey: u8aToHex(decodeAddress(address))
     }

@@ -53,8 +53,6 @@ export const getPrices = async (ids: string) => {
   const forceUpdate = needUpdate && (await needUpdate())
   const cacheData = await pricesCache.get(cacheKey)
 
-  console.log('Is Empty cache data: ', !cacheData?.values || !cacheData?.values.length)
-
   if (!cacheData?.values || !cacheData?.values.length) {
     await fetchPrices(ids)
   }

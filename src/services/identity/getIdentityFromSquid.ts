@@ -4,7 +4,10 @@ import { identitiesInfoCache } from '.'
 import { toGenericAccountId } from '../utils'
 import { u8aToHex } from '@polkadot/util'
 import { getIdentityFromChain } from './getIdentityFromChain'
-import { ApiPromise } from '@polkadot/api';
+import { ApiPromise } from '@polkadot/api'
+import { newLogger } from '@subsocial/utils'
+
+const log = newLogger('Identity')
 
 const GET_IDENTITY = gql`
   query GetIdentity($ids: [String!]) {
@@ -94,8 +97,8 @@ export const tryToGetIdentityFromSquid = async (
 ) => {
   try {
     await getIdentityFromSquid(accounts, chain)
-  } catch {
-    console.error('Failed to get identity from squid, trying to get from chain')
+  } catch (e) {
+    log.warn('Failed to get identity from squid, trying to get from chain', e)
     await getIdentityFromChain(api, accounts, chain)
   }
 }
