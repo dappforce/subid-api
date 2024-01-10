@@ -1,9 +1,8 @@
-import { GraphQLClient, gql } from 'graphql-request'
+import { gql } from 'graphql-request'
 import { u8aToHex } from '@polkadot/util'
 import { decodeAddress } from '@polkadot/util-crypto'
 import { getOrCreateQueue } from './queue'
-
-export const txAggregatorClient = new GraphQLClient('http://localhost:8080/graphql')
+import { txAggregatorGraphQlClient } from '../../constant/graphQlClients'
 
 const ADD_QUEUE_JOB_NAME = 'REFRESH_TX_HISTORY_FOR_ACCOUNT_ON_DEMAND'
 
@@ -63,7 +62,7 @@ export const getAccountTxHistory = async ({
 
   const query = buildGetAccountTxHistoryQuery(networks, events)
 
-  const txs = await txAggregatorClient.request(query, {
+  const txs = await txAggregatorGraphQlClient.request(query, {
     address,
     pageSize,
     offset,
