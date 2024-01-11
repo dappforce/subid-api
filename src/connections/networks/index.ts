@@ -550,7 +550,8 @@ export const polkadotParachains: Networks = {
   centrifuge: {
     name: 'Centrifuge',
     icon: 'centrifuge.png',
-    ...resolveOnfinalityUrl('centrifuge-parachain'),
+    // ...resolveOnfinalityUrl('centrifuge-parachain'),
+    node: 'wss://centrifuge-rpc.dwellir.com',
     paraId: 2031,
     vestingMethod: 'vesting.vest',
     isTransferable: true,
