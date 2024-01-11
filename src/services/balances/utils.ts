@@ -4,6 +4,9 @@ import { getGenshiroTokens } from './genshiro'
 import { getOrUpdatePropertiesByNetwork } from '../properties'
 import { asTypesGenerator } from '../../utils'
 import { bnMax } from '@polkadot/util'
+import { newLogger } from '@subsocial/utils';
+
+const log = newLogger('Balances')
 
 export type TokenBalances = Record<string, any>
 
@@ -14,7 +17,7 @@ const getNativeTokenBalance = async (api: ApiPromise, account: string) => {
 
   const locks = await api.query.balances.locks(account)
 
-  const lockedBalance = locks.length && bnMax(...(locks.map(({ amount }) => amount)))
+  const lockedBalance = locks.length && bnMax(...locks.map(({ amount }) => amount))
 
   const totalBalance = reserved ? free.add(reserved) || 0 : free
 
@@ -26,7 +29,11 @@ const getNativeTokenBalance = async (api: ApiPromise, account: string) => {
     frozenBalance: frozen?.toString(),
     freeBalance: freeBalance?.gt(new BN(0)) ? freeBalance?.toString() : '0',
     lockedBalance: lockedBalance?.toString(),
-    locks: locks.map(({ id, amount, reasons }) => ({ id: id.toHuman(), amount: amount.toString(), reasons}))
+    locks: locks.map(({ id, amount, reasons }) => ({
+      id: id.toHuman(),
+      amount: amount.toString(),
+      reasons
+    }))
   }
 }
 
@@ -121,6 +128,7 @@ const getOrmlTokens: GetBalancesType = async (api, network, account, tokens) => 
 
   const balanceGetter =
     customOrmlTokenGetter[ormlTokenGetterNetworkMapper[network] ?? ''] ?? defaultOrmlTokenGetter
+
   const balancePromise = tokens.map(async (token) => {
     try {
       let balances = {} as unknown as Balances
@@ -136,8 +144,9 @@ const getOrmlTokens: GetBalancesType = async (api, network, account, tokens) => 
       tokenBalances[isObject ? token.symbol : token] = {
         ...balances
       }
-    } catch {
+    } catch (e) {
       // ok
+      log.warn(`Failed to get balance for ${token}`, e)
     }
   })
 
