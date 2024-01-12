@@ -4,10 +4,14 @@ let queue = null
 
 export const getOrCreateQueue = () => {
   if (!queue) {
+    const host = process.env.AGGREGATOR_REDIS_HOST
+    const password = process.env.AGGREGATOR_REDIS_PASSWORD
+    const port = process.env.AGGREGATOR_REDIS_PORT as unknown as number
+
     const aggregatorRedisConfig = {
-      host: process.env.AGGREGATOR_REDIS_HOST || '',
-      password: process.env.AGGREGATOR_REDIS_PASSWORD || '',
-      port: (process.env.AGGREGATOR_REDIS_PORT as unknown as number) || 0
+      host,
+      password,
+      port
     }
 
     queue = new Queue('ACCOUNT_AGGREGATION_FLOW', {

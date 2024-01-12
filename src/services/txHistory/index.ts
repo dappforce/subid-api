@@ -1,6 +1,6 @@
 import { gql } from 'graphql-request'
 import { u8aToHex } from '@polkadot/util'
-import { decodeAddress } from '@polkadot/util-crypto'
+import { decodeAddress, isEthereumAddress } from '@polkadot/util-crypto'
 import { getOrCreateQueue } from './queue'
 import { txAggregatorGraphQlClient } from '../../constant/graphQlClients'
 
@@ -88,16 +88,16 @@ export const getAccountTxHistoryWithQueue = async (props: GetAccountTransactions
     const jobState = await jobByAddress.getState()
 
     if (jobState === 'completed') {
-      await jobByAddress.remove()
+      jobByAddress.remove()
 
       actualData = true
     }
   } else {
     const taskPayload = {
-      publicKey: u8aToHex(decodeAddress(address))
+      publicKey: isEthereumAddress(address) ? address : u8aToHex(decodeAddress(address))
     }
 
-    await queue.add(ADD_QUEUE_JOB_NAME, taskPayload, {
+    queue.add(ADD_QUEUE_JOB_NAME, taskPayload, {
       attempts: 5,
       jobId,
       removeOnComplete: false,
