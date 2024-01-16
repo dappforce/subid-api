@@ -18,6 +18,7 @@ import createFeesRouter from './fees'
 import { Connections } from '../connections'
 import createCreatorStakingRouter from './creatorStaking'
 import { isDef } from '@subsocial/utils';
+import createTxHistoryRouter from './txHistory'
 
 export const createRoutes = (apis: Connections) => {
   const router = Router()
@@ -79,7 +80,7 @@ export const createRoutes = (apis: Connections) => {
       const result = balances.map((balance: any) => {
         const { status, value } = balance
 
-        return status === 'fulfilled' && value
+        return status === 'fulfilled' ? value : undefined
       })
 
       res.send(result.filter(isDef))
@@ -151,6 +152,7 @@ export const createRoutes = (apis: Connections) => {
   router.use('/staking/collator', asyncErrorHandler(createCollatorStakingRouter(apis.mixedApis)))
   router.use('/staking/validator', asyncErrorHandler(createValidatorStakingRouter(apis)))
   router.use('/staking/creator', asyncErrorHandler(createCreatorStakingRouter(apis)))
+  router.use('/tx', asyncErrorHandler(createTxHistoryRouter()))
 
   router.use('/fees', asyncErrorHandler(createFeesRouter(apis.mixedApis)))
 

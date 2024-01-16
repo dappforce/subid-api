@@ -4,15 +4,28 @@ import { RelayChain } from '../services/crowdloan/types'
 
 export const subsocialGraphQlClient = new GraphQLClient(SUBSOCIAL_GRAPHQL_CLIENT)
 
-export const soonsocialGraphQlClient = new GraphQLClient('https://squid.subsquid.io/soonsocial/graphql')
+export const soonsocialGraphQlClient = new GraphQLClient(
+  'https://squid.subsquid.io/soonsocial/graphql'
+)
 
-export const contributionsClientByRelay: Record<RelayChain, { client: GraphQLClient; addressPrefix: number }> = {
+export const txAggregatorGraphQlClient = new GraphQLClient(
+  'https://tx-aggregation.subsocial.network/graphql'
+)
+
+export const contributionsClientByRelay: Record<
+  RelayChain,
+  { client: GraphQLClient; addressPrefix: number }
+> = {
   kusama: {
-    client: new GraphQLClient('https://squid.subsquid.io/kusama-explorer/graphql', { timeout: 4000 }),
+    client: new GraphQLClient('https://squid.subsquid.io/kusama-explorer/graphql', {
+      timeout: 4000
+    }),
     addressPrefix: 2
   },
   polkadot: {
-    client: new GraphQLClient('https://squid.subsquid.io/polkadot-explorer/graphql', { timeout: 4000 }),
+    client: new GraphQLClient('https://squid.subsquid.io/polkadot-explorer/graphql', {
+      timeout: 4000
+    }),
     addressPrefix: 0
   }
 }

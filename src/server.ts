@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import timeout from 'connect-timeout'
-import { reqTimeoutSecs, allowedOrigins, port } from './constant/env'
+import { reqTimeoutSecs, port, allowedOrigins } from './constant/env'
 import { newLogger } from '@subsocial/utils'
 
 import { createRoutes } from './routes'
@@ -36,7 +36,7 @@ export const startHttpServer = (apis: Connections) => {
     })
   )
 
-  // For localhost testing 
+  // For localhost testing
   // app.use(
   //   cors((req, callback) => {
   //     const origin = req.method === 'GET' ? '*' : '*'
