@@ -9,7 +9,7 @@ export const soonsocialGraphQlClient = new GraphQLClient(
 )
 
 export const txAggregatorGraphQlClient = new GraphQLClient(
-  'https://datasource-subquery-aggregation.subsocial.network/graphql'
+  'https://tx-aggregation.subsocial.network/graphql'
 )
 
 export const contributionsClientByRelay: Record<
