@@ -481,7 +481,8 @@ export const polkadotParachains: Networks = {
     name: 'Manta',
     node: 'wss://ws.manta.systems',
     icon: 'manta.png',
-    paraId: 2015
+    paraId: 2015,
+    isTransferable: true
   },
   subdao: {
     name: 'SubDAO',
