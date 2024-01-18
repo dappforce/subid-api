@@ -479,7 +479,7 @@ export const polkadotParachains: Networks = {
   },
   manta: {
     name: 'Manta',
-    node: '',
+    node: 'wss://ws.manta.systems',
     icon: 'manta.png',
     paraId: 2015
   },
