@@ -3,7 +3,7 @@ import { FIVE_MINUTES } from '../constant/index'
 import Cache from '../cache'
 
 const cacheKey = 'prices'
-const coingeckoUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd'
+const coingeckoUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&price_change_percentage==24h'
 
 const pricesCache = new Cache<any>('prices', FIVE_MINUTES)
 
@@ -19,23 +19,9 @@ const fetchPrices = async (ids: string) => {
 
   const newPrices = await axiosGetRequest(`${coingeckoUrl}&ids=${ids}`, { timeout: 5000 })
 
-  const subsocialTokenPrice = await axiosGetRequest(
-    'https://api.hydradx.io/hydradx-ui/v1/stats/price/24',
-    { timeout: 5000 }
-  )
-
-  const subsocialTokenPriceObj = subsocialTokenPrice
-    ? {
-        id: 'subsocial',
-        symbol: 'sub',
-        name: 'Subsocial',
-        current_price: subsocialTokenPrice?.[0]?.price_usd
-      }
-    : {}
-
   const newData = newPrices
     ? {
-        values: [ ...newPrices, subsocialTokenPriceObj ],
+        values: newPrices,
         isCachedData: false,
         lastUpdate: new Date().getTime()
       }

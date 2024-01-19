@@ -22,27 +22,27 @@ export const startHttpServer = (apis: Connections) => {
 
   app.use(express.static('public'))
 
-  app.use(
-    cors((req, callback) => {
-      const corsOptions = { origin: true }
-      const origin = req.header('Origin')
-      const isAllowedOrigin = allowedOrigins.some((allowedOrigin) =>
-        origin?.includes(allowedOrigin)
-      )
-      if (!isAllowedOrigin) {
-        corsOptions.origin = false
-      }
-      callback(null, corsOptions)
-    })
-  )
-
-  // For localhost testing
   // app.use(
   //   cors((req, callback) => {
-  //     const origin = req.method === 'GET' ? '*' : '*'
-  //     callback(null, { origin })
+  //     const corsOptions = { origin: true }
+  //     const origin = req.header('Origin')
+  //     const isAllowedOrigin = allowedOrigins.some((allowedOrigin) =>
+  //       origin?.includes(allowedOrigin)
+  //     )
+  //     if (!isAllowedOrigin) {
+  //       corsOptions.origin = false
+  //     }
+  //     callback(null, corsOptions)
   //   })
   // )
+
+  // For localhost testing 
+  app.use(
+    cors((req, callback) => {
+      const origin = req.method === 'GET' ? '*' : '*'
+      callback(null, { origin })
+    })
+  )
 
   function haltOnTimedout(req: express.Request, _res: express.Response, next) {
     if (!req.timedout) next()
