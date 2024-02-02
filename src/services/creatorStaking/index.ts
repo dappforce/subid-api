@@ -178,6 +178,8 @@ export const getBackerRewards = async ({ account, spaceIds }: StakerRewardsProps
   })
 
   availableClaimResult?.forEach(([spaceId, claimCount]) => {
+    if(rewardsBySpaceId[spaceId] === 0) return
+
     availableClaimsBySpaceId[spaceId] = claimCount
   })
 
