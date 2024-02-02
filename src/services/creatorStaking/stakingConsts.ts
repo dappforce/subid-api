@@ -16,7 +16,7 @@ export const getStakingConsts = async ({ apis }: CreatorStakingProps) => {
 
   if (!cacheData || forceUpdate) {
     const unbondingPeriodInEras = api.consts.creatorStaking.unbondingPeriodInEras.toJSON()
-    const minimumStakingAmount = api.consts.creatorStaking.minimumStake.toJSON()
+    const minimumStakingAmount = api.consts.creatorStaking.minimumTotalStake.toJSON()
     const minimumRemainingAmount = api.consts.creatorStaking.minimumRemainingFreeBalance.toJSON()
     const maxNumberOfStakersPerCreator =
       api.consts.creatorStaking.maxNumberOfBackersPerCreator.toJSON()
