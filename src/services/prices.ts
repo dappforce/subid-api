@@ -3,7 +3,7 @@ import { FIVE_MINUTES } from '../constant/index'
 import Cache from '../cache'
 
 const cacheKey = 'prices'
-const coingeckoUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&price_change_percentage==24h'
+const coingeckoUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&price_change_percentage=24h'
 
 const pricesCache = new Cache<any>('prices', FIVE_MINUTES)
 
