@@ -36,7 +36,7 @@ export const startHttpServer = (apis: Connections) => {
     })
   )
 
-  // For localhost testing
+  // For localhost testing 
   // app.use(
   //   cors((req, callback) => {
   //     const origin = req.method === 'GET' ? '*' : '*'
