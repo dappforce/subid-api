@@ -1,5 +1,4 @@
 import { WithApis } from '../types'
-import BN from 'bignumber.js'
 import { isDef } from '@subsocial/utils'
 import { rpcQuery } from '../rpc'
 
@@ -117,9 +116,7 @@ export const getGeneralBackerInfo = async ({ apis, spaceIds, account }: GeneralS
   spaceIds.forEach((id, index) => {
     const value = generalStakerInfoResult[index]?.toJSON() as any
     if (value || value !== null) {
-      const stakes = value.stakes.sort((a, b) => new BN(b.era).minus(new BN(a.era)))
-
-      generalStakerInfo[id] = stakes
+      generalStakerInfo[id] = value.staked
     }
   })
 
