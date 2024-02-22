@@ -5,7 +5,7 @@ import { BifrostAdapter } from '@polkawallet/bridge/adapters/bifrost'
 import { AltairAdapter } from '@polkawallet/bridge/adapters/centrifuge'
 import { ShadowAdapter } from '@polkawallet/bridge/adapters/crust'
 import { CrabAdapter } from '@polkawallet/bridge/adapters/darwinia'
-import { BasiliskAdapter, HydraAdapter } from '@polkawallet/bridge/adapters/hydradx'
+import { BasiliskAdapter } from '@polkawallet/bridge/adapters/hydradx'
 import { IntegriteeAdapter } from '@polkawallet/bridge/adapters/integritee'
 import { InterlayAdapter, KintsugiAdapter } from '@polkawallet/bridge/adapters/interlay'
 import { KicoAdapter } from '@polkawallet/bridge/adapters/kico'
@@ -22,6 +22,7 @@ import { BaseCrossChainAdapter } from '@polkawallet/bridge/base-chain-adapter'
 import { firstValueFrom } from 'rxjs'
 import { SubsocialAdapter } from './custom/SubsocialAdapter'
 import { MoonbeamAdapter } from './custom/MoonbeamAdapter'
+import { HydraDxAdapter } from './custom/HydraAdapter'
 
 const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainName?: ChainId }> = {
   polkadot: {
@@ -103,7 +104,7 @@ const transferAdapters: Record<string, { adapter: BaseCrossChainAdapter; chainNa
     chainName: 'heiko'
   },
   hydradx: {
-    adapter: new HydraAdapter(),
+    adapter: new HydraDxAdapter(),
   },
   zeitgeist: {
     adapter: new ZeitgeistAdapter()
