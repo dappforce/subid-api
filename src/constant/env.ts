@@ -1,6 +1,6 @@
 export const reqTimeoutSecs = 60
 
-export const allowedOrigins = [ 'sub.id', 'polkaverse.com', 'subsocial.network', 'grill.chat', 'grill.so' ] // process.env.CORS_ALLOWED_ORIGIN?.split(',').map(x => x.trim()) || ['http://localhost']
+export const allowedOrigins = [ 'sub.id', 'polkaverse.com', 'subsocial.network', 'grill.chat', 'grillapp.net' ] // process.env.CORS_ALLOWED_ORIGIN?.split(',').map(x => x.trim()) || ['http://localhost']
 
 export const port = process.env.OFFCHAIN_SERVER_PORT || 3001
 
