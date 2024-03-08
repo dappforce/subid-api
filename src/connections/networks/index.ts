@@ -242,9 +242,9 @@ export const kusamaParachains: Networks = {
     disabled: true
   },
   bitCountry: {
-    name: 'Bit.Country Pioneer',
+    name: 'MNet Pioneer',
     node: 'wss://pioneer-rpc-3.bit.country/wss',
-    icon: 'bitcountry.svg',
+    icon: 'pioneer.png',
     paraId: 2096,
     vestingMethod: 'vesting.vest',
     isTransferable: true
@@ -458,6 +458,13 @@ export const polkadotParachains: Networks = {
     icon: 'clover.svg',
     paraId: 2002,
     vestingMethod: 'vesting.vest'
+  },
+  continuum: {
+    name: 'MNet Continuum',
+    icon: 'continuum.png',
+    node: 'wss://continuum-rpc-1.metaverse.network/wss',
+    paraId: 3346,
+    isTransferable: true
   },
   astar: {
     name: 'Astar',
