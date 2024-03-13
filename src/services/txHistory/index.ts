@@ -91,7 +91,7 @@ export const getAccountTxHistoryWithQueue = async (props: GetAccountTransactions
       await jobByAddress.remove()
 
       actualData = true
-    } else if (jobState === 'failed') {
+    } else if (jobState === 'failed' || jobState === 'stuck') {
       await jobByAddress.remove()
 
       actualData = false
