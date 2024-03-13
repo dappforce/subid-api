@@ -18,7 +18,7 @@ export const getOrCreateQueue = () => {
       redis: aggregatorRedisConfig,
       prefix: process.env.AGGREGATOR_REDIS_PREFIX,
       settings: {
-        lockDuration: 20000, // Check for stalled jobs each 2 min
+        lockDuration: 35000, // Check for stalled jobs each 3.5 min
         lockRenewTime: 10000,
         stalledInterval: 20 * 60 * 1000,
         maxStalledCount: 1
