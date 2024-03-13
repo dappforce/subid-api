@@ -88,16 +88,20 @@ export const getAccountTxHistoryWithQueue = async (props: GetAccountTransactions
     const jobState = await jobByAddress.getState()
 
     if (jobState === 'completed') {
-      jobByAddress.remove()
+      await jobByAddress.remove()
 
       actualData = true
+    } else if (jobState === 'failed') {
+      await jobByAddress.remove()
+
+      actualData = false
     }
   } else {
     const taskPayload = {
       publicKey: isEthereumAddress(address) ? address : u8aToHex(decodeAddress(address))
     }
 
-    queue.add(ADD_QUEUE_JOB_NAME, taskPayload, {
+    await queue.add(ADD_QUEUE_JOB_NAME, taskPayload, {
       attempts: 5,
       jobId,
       removeOnComplete: false,
