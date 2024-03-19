@@ -27,5 +27,6 @@ jobs:
         shell: bash
         run: |
           sed -i 's|<IMAGE>|'${{ env.image }}'|' $GITHUB_WORKSPACE/deployment/production/deployment.yaml
-          kubectl apply -f $GITHUB_WORKSPACE/deployment/production/
+          kubectl apply -f $GITHUB_WORKSPACE/deployment/production/deployment.yaml
+          kubectl apply -f $GITHUB_WORKSPACE/deployment/production/hpa.yaml
           kubectl -n sub-id rollout status deployment/subid-back
