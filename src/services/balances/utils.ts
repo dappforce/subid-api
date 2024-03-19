@@ -139,9 +139,9 @@ const ormlTokenGetterNetworkMapper: { [key: string]: keyof typeof customOrmlToke
   phala: 'assets.account',
   khala: 'assets.account',
   altair: 'ormlTokens.accounts',
-  centrifuge: 'ormlTokens.accounts', // +
+  centrifuge: 'ormlTokens.accounts',
   shadow: 'ormlTokens.accounts',
-  pendulum: 'tokens.accounts' // +
+  pendulum: 'tokens.accounts'
 }
 
 const getOrmlTokens: GetBalancesType = async (api, network, account, tokens) => {
