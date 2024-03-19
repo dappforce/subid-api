@@ -4,7 +4,7 @@ import { getGenshiroTokens } from './genshiro'
 import { getOrUpdatePropertiesByNetwork } from '../properties'
 import { asTypesGenerator } from '../../utils'
 import { bnMax } from '@polkadot/util'
-import { newLogger } from '@subsocial/utils';
+import { newLogger } from '@subsocial/utils'
 
 const log = newLogger('Balances')
 
@@ -48,13 +48,18 @@ export const parseBalances = (
   free?: BN,
   reserved?: BN,
   frozen?: BN,
+  locks: any[] = [],
   other?: Record<string, any>
 ) => {
   const totalBalance = reserved ? free.add(reserved) || 0 : free
+  const lockedBalance = locks.length && bnMax(...locks.map(({ amount }) => amount))
+
+  const freeBalance = lockedBalance ? free.sub(lockedBalance) : free
 
   return {
-    freeBalance: free?.toString(),
+    freeBalance: freeBalance.toString(),
     reservedBalance: reserved?.toString(),
+    lockedBalance: lockedBalance?.toString(),
     frozen: frozen?.toString(),
     totalBalance: totalBalance?.toString(),
     ...other
@@ -73,11 +78,19 @@ type TokenBalanceData = {
   frozen?: BN
   reserved?: BN
 }
-function defaultOrmlTokenGetter(
+async function defaultOrmlTokenGetter(
   api: ApiPromise,
   { account, token }: { account: string; token: any }
-): Promise<TokenBalanceData> {
-  return api.query.tokens.accounts(account, token) as any
+): Promise<{ balances: TokenBalanceData; locks?: any[] }> {
+  const [balances, locks] = await api.queryMulti([
+    [api.query.tokens.accounts, [account, token]],
+    [api.query.tokens.locks, [account, token]]
+  ])
+
+  return {
+    balances: balances as any,
+    locks: locks as any
+  }
 }
 
 const customOrmlTokenGetter = asTypesGenerator<
@@ -94,13 +107,21 @@ const customOrmlTokenGetter = asTypesGenerator<
       frozen: new BN(0)
     }
     balanceData[isFrozen ? 'frozen' : 'free'] = new BN(balance)
-    return balanceData
+    return { balances: balanceData }
   },
-  'ormlTokens.accounts': (api, { account, token }) => {
-    return api.query.ormlTokens.accounts(account, token) as any
+  'ormlTokens.accounts': async (api, { account, token }) => {
+    const [balances, locks] = await api.queryMulti([
+      [api.query.tokens.accounts, [account, token]],
+      [api.query.tokens.locks, [account, token]]
+    ])
+    return { balances: balances as any, locks: locks as any }
   },
-  'tokens.accounts': (api, { account, token }) => {
-    return api.query.tokens.accounts(account, { XCM: token }) as any
+  'tokens.accounts': async (api, { account, token }) => {
+    const [balances, locks] = await api.queryMulti([
+      [api.query.tokens.accounts, [account, { XCM: token }]],
+      [api.query.tokens.locks, [account, { XCM: token }]]
+    ])
+    return { balances: balances as any, locks: locks as any }
   }
 })
 const ormlTokenGetterNetworkMapper: { [key: string]: keyof typeof customOrmlTokenGetter } = {
@@ -138,8 +159,8 @@ const getOrmlTokens: GetBalancesType = async (api, network, account, tokens) => 
         account: account,
         token: isObject ? token.currency : { Token: token }
       })
-      const { free, frozen, reserved } = balancesCodec as any
-      balances = parseBalances(free, reserved, frozen)
+      const { free, frozen, reserved } = balancesCodec.balances as any
+      balances = parseBalances(free, reserved, frozen, balancesCodec.locks)
 
       tokenBalances[isObject ? token.symbol : token] = {
         ...balances
