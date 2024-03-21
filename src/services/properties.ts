@@ -30,8 +30,8 @@ export async function getCachedChainProperties(chain: string): Promise<ChainProp
 const customFetchAssetsRegistryByNetwork = {
   interlay: getKintsugiAssetRegistry,
   kintsugi: getKintsugiAssetRegistry,
-  basilisk: commonAssetRegistries['assetRegistry.metadataMap'],
-  hydradx: commonAssetRegistries['assetRegistry.metadataMap'],
+  basilisk: commonAssetRegistries['assetRegistry.assets'],
+  hydradx: commonAssetRegistries['assetRegistry.assets'],
   astar: commonAssetRegistries['assets.metadata'],
   shiden: commonAssetRegistries['assets.metadata'],
   statemine: commonAssetRegistries['assets.metadata'],

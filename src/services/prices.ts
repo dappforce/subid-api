@@ -3,7 +3,8 @@ import { FIVE_MINUTES } from '../constant/index'
 import Cache from '../cache'
 
 const cacheKey = 'prices'
-const coingeckoUrl = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&price_change_percentage=24h'
+const coingeckoUrl =
+  'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&price_change_percentage=24h'
 
 const pricesCache = new Cache<any>('prices', FIVE_MINUTES)
 
@@ -17,7 +18,9 @@ const fetchPrices = async (ids: string) => {
     loading: true
   })
 
-  const newPrices = await axiosGetRequest(`${coingeckoUrl}&ids=${ids}`, { timeout: 5000 })
+  const newPrices = ids
+    ? await axiosGetRequest(`${coingeckoUrl}&ids=${ids}`, { timeout: 5000 })
+    : undefined
 
   const newData = newPrices
     ? {

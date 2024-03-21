@@ -111,8 +111,8 @@ const customOrmlTokenGetter = asTypesGenerator<
   },
   'ormlTokens.accounts': async (api, { account, token }) => {
     const [balances, locks] = await api.queryMulti([
-      [api.query.tokens.accounts, [account, token]],
-      [api.query.tokens.locks, [account, token]]
+      [api.query.ormlTokens.accounts, [account, token]],
+      [api.query.ormlTokens.locks, [account, token]]
     ])
     return { balances: balances as any, locks: locks as any }
   },
