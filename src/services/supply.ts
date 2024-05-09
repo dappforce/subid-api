@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api'
 import { ONE_DAY } from '../constant'
 import Cache from '../cache'
 import { BN_ZERO } from '@polkadot/util'
-import { convertToBalanceWithDecimal } from '@subsocial/utils'
+import { convertToBalanceWithDecimal, balanceWithDecimal } from '@subsocial/utils'
 
 const totalSupplyCache = new Cache<string>('totalSupply', ONE_DAY)
 
@@ -32,12 +32,15 @@ export const getTotalSupplyByNetwork = async (api: ApiPromise, network: string) 
 const circulationSupplyCache = new Cache<string>('circulationSupply', ONE_DAY)
 
 const treasuryAccount = '3qWxYkW2wKcj2A6s3hVMeoJrbmkGPjm8aMJWRaLL4HUjTk9j'
+const reservedTreasuryBalance = balanceWithDecimal('300000000', 10).toNumber()
 export const getCirculatingSupplyByNetwork = async (api: ApiPromise, network: string) => {
   const cacheData = await circulationSupplyCache.get(network)
 
   if (cacheData) return cacheData
 
   if (!api) return '0'
+
+  if (network !== 'subsocial') return '0'
 
   try {
     const totalIssuance = await api.query.balances.totalIssuance()
@@ -52,7 +55,9 @@ export const getCirculatingSupplyByNetwork = async (api: ApiPromise, network: st
     const treasuryBalance = await api.query.system.account(treasuryAccount)
 
     const circulationSupply = convertToBalanceWithDecimal(
-      totalIssuance.sub(totalLocked).sub(treasuryBalance.data.free).toString(),
+      totalIssuance.sub(totalLocked)
+        .sub(treasuryBalance.data.free)
+        .subn(reservedTreasuryBalance).toString(),
       api.registry.chainDecimals[0]
     ).toString()
 
