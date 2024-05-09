@@ -7,6 +7,7 @@ const log = newLogger('AssetRegistry')
 export const commonAssetRegistries = {
   'assets.metadata': generateCommonAssetRegistry(['assets', 'metadata']),
   'assetRegistry.metadataMap': generateCommonAssetRegistry(['assetRegistry', 'assetMetadataMap']),
+  'assetRegistry.assets': generateCommonAssetRegistry(['assetRegistry', 'assets']),
   'ormlAssetRegistry.metadata': generateCommonAssetRegistry(['ormlAssetRegistry', 'metadata']),
   'currencies.listenAssetsInfo': generateCommonAssetRegistry(
     ['currencies', 'listenAssetsInfo'],

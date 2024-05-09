@@ -32,9 +32,9 @@ jobs:
         continue-on-error: true
         run: |
           doctl kubernetes cluster kubeconfig save --expiry-seconds 600 c7e84602-9029-40ed-9f95-6c113f6693ee
-          NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/all.yaml
-          NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/features/deployment.yaml
-          kubectl delete -f $GITHUB_WORKSPACE/deployment/features/back/
+          NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/deploy/all.yaml
+          NAME=${{ env.name }} && sed -i 's|<BRANCH>|'${NAME}'|' $GITHUB_WORKSPACE/deployment/deploy/deployment.yaml
+          kubectl delete -f $GITHUB_WORKSPACE/deployment/deploy/
 
       - name: final task
         if: always()
