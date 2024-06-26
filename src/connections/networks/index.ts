@@ -585,8 +585,8 @@ export const polkadotParachains: Networks = {
     vestingMethod: 'vesting.vest'
   },
   hydradx: {
-    name: 'HydraDX',
-    icon: 'snakenet.svg',
+    name: 'Hydration Network',
+    icon: 'hydradx.svg',
     node: 'wss://hydradx-rpc.dwellir.com',
     paraId: 2034,
     vestingMethod: 'vesting.claim',
